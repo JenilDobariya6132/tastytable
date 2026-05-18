@@ -369,7 +369,9 @@ const recipes = [
       host: DB_HOST,
       user: DB_USER,
       password: DB_PASS,
-      database: DB_NAME
+      database: DB_NAME,
+      port: process.env.MYSQL_PORT || 3306,
+      ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
     });
 
     console.log('Connected to DB');
