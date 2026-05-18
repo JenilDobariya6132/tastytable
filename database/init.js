@@ -5,12 +5,17 @@ async function initDb(opts) {
   const user = opts.user;
   const password = opts.password;
   const database = opts.database;
+  const port = opts.port || 3306;
   let pool;
   let dbReady = false;
-  const conn = await mysql.createConnection({ host, user, password, multipleStatements: true });
+  
+  // Cloud databases like TiDB Serverless usually require SSL
+  const ssl = { minVersion: 'TLSv1.2', rejectUnauthorized: true };
+
+  const conn = await mysql.createConnection({ host, user, password, port, ssl, multipleStatements: true });
   await conn.query(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
   await conn.end();
-  pool = mysql.createPool({ host, user, password, database, waitForConnections: true, connectionLimit: 10, queueLimit: 0 });
+  pool = mysql.createPool({ host, user, password, database, port, ssl, waitForConnections: true, connectionLimit: 10, queueLimit: 0 });
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,

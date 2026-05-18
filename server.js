@@ -76,6 +76,7 @@ const DB_HOST = process.env.MYSQL_HOST || 'localhost';
 const DB_USER = process.env.MYSQL_USER || 'root';
 const DB_PASS = process.env.MYSQL_PASSWORD || 'Jenil@2007';
 const DB_NAME = process.env.MYSQL_DATABASE || 'cookvala';
+const DB_PORT = process.env.MYSQL_PORT || 3306;
 
 let pool;
 let dbReady = false;
@@ -2138,7 +2139,7 @@ app.get('/api/feed', async (req, res) => {
     }
 });
 
-initDbExternal({ host: DB_HOST, user: DB_USER, password: DB_PASS, database: DB_NAME })
+initDbExternal({ host: DB_HOST, user: DB_USER, password: DB_PASS, database: DB_NAME, port: DB_PORT })
   .then(({ pool: p, dbReady: ready }) => { pool = p; dbReady = ready; })
   .catch(err => { console.error('DB init failed', err); })
   .finally(() => {
