@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Add Recipe | CookVala</title>
+  <meta name="description" content="Add your own recipe to CookVala.">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .form { display: flex; flex-direction: column; gap: 24px; padding: 40px; }
+    .form-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .form-row > * { flex: 1; min-width: 200px; }
+    .form input[type="text"], .form input[type="number"], .form input[type="url"], .form select, .form textarea {
+      width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-family: inherit; font-size: 15px; background-color: #f8fafc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form input:focus, .form select:focus, .form textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(62, 127, 98, 0.15);
+    }
+    .form textarea { resize: vertical; }
+    .file-input { display: flex; flex-direction: column; gap: 8px; }
+    .file-input label { font-weight: 600; font-size: 14px; color: var(--text); }
+    .file-input input[type="file"] {
+      padding: 12px; background: white; border: 2px dashed #cbd5e1; border-radius: 8px; cursor: pointer; width: 100%;
+    }
+    .btn-submit {
+      background: var(--accent); color: white; padding: 16px; border: none; border-radius: 8px;
+      font-size: 18px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(62, 127, 98, 0.3); }
+    .type-toggle button {
+      font-size: 16px; border-radius: 8px; transition: all 0.2s; padding: 14px !important;
+    }
+    .type-toggle button.active {
+      background-color: var(--accent) !important; color: white !important; border-color: var(--accent) !important;
+    }
+    .divider { text-align: center; margin: 10px 0; position: relative; }
+    .divider::before, .divider::after {
+      content: ""; position: absolute; top: 50%; width: 45%; height: 1px; background: #cbd5e1;
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+    .divider span { background: #fff; padding: 0 15px; color: #64748b; font-weight: 600; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <h2>Add Recipe</h2>
+      <p class="meta" id="auth-status"></p>
+      
+      <div class="type-toggle" style="display:flex; gap:10px; margin-bottom:20px;">
+         <button type="button" id="type-recipe" class="active" onclick="setType('recipe')" style="flex:1; padding:10px; cursor:pointer; background:#f5f5f5; border:1px solid #ddd; font-weight:bold;">Add Recipe Card</button>
+         <button type="button" id="type-reel" onclick="setType('reel')" style="flex:1; padding:10px; cursor:pointer; background:#fff; border:1px solid #ddd;">Add Reel</button>
+      </div>
+
+      <div class="card" style="box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 16px;">
+        <form class="form" id="add-recipe-form">
+          <input type="hidden" name="type" id="form-type" value="recipe">
+          <input type="text" name="name" placeholder="Title / Recipe Name" required aria-label="Recipe name" style="font-size: 20px; font-weight: 600; padding: 16px;">
+          
+          <div id="recipe-fields" style="display: flex; flex-direction: column; gap: 24px;">
+              <select name="category" id="category-select" required aria-label="Category">
+                <option value="" disabled selected>Select Category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Dessert">Dessert</option>
+                <option value="Snack">Snack</option>
+                <option value="Side">Side</option>
+              </select>
+              <div class="form-row">
+                 <input type="text" name="prep_time" placeholder="Prep Time (e.g. 15 min)" aria-label="Prep Time">
+                 <input type="text" name="cook_time" placeholder="Cook Time (e.g. 20 min)" aria-label="Cook Time">
+                 <input type="text" name="servings" placeholder="Servings (e.g. 4)" aria-label="Servings">
+              </div>
+              <div class="form-row">
+                 <input type="number" name="calories" placeholder="Calories (e.g. 500)" aria-label="Calories">
+              </div>
+              <div class="file-input">
+                <label for="image-file">Upload Cover Image</label>
+                <input type="file" id="image-file" name="image_file" accept="image/*" aria-label="Upload Image">
+              </div>
+          </div>
+
+          <div class="file-input">
+            <label for="video-file" id="video-label">Upload Video (Max 2GB)</label>
+            <input type="file" id="video-file" name="video" accept="video/*" aria-label="Upload Video">
+          </div>
+          <div class="divider"><span>OR</span></div>
+          <input type="url" name="video_url" placeholder="Video URL (e.g. YouTube, Vimeo, or direct link)" aria-label="Video URL">
+          
+          <textarea name="intro" placeholder="Short introduction / Caption" rows="3" aria-label="Introduction"></textarea>
+          
+          <div id="recipe-details" style="display: flex; flex-direction: column; gap: 24px;">
+              <textarea name="ingredients" placeholder="Ingredients (one per line)" rows="6" aria-label="Ingredients"></textarea>
+              <textarea name="instructions" placeholder="Instructions (steps, one per line)" rows="8" aria-label="Instructions"></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">Save Recipe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="wrap cols">
+      <div>
+        <h3>CookVala</h3>
+        <p>CookVala shares easy, healthy, and budget-friendly recipes for real life.</p>
+        <small>© 2025 CookVala. All rights reserved.</small>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a> · <a href="recipes.html">Recipes</a> · <a href="blog.html">Blog</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a></p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <p>Instagram · YouTube</p>
+      </div>
+      <div class="nl">
+        <h4>Newsletter</h4>
+        <form>
+          <input type="email" placeholder="you@example.com" aria-label="Email">
+          <button type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/auth-nav.js"></script>
+</body>
+<script>
+  function getUser() {
+    try { return JSON.parse(localStorage.getItem('tt_user') || 'null'); } catch (e) { return null; }
+  }
+  function getRecipes() {
+    try { return JSON.parse(localStorage.getItem('tt_recipes') || '[]'); } catch (e) { return []; }
+  }
+  function setRecipes(list) {
+    localStorage.setItem('tt_recipes', JSON.stringify(list));
+  }
+  function slugify(s) {
+    return 'user-' + s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+  (function () {
+    if (window.location.protocol === 'file:') {
+      alert('Error: You are viewing this page directly from a file. You must use the local server to add recipes.\n\nPlease open http://localhost:3000/add-recipe.html in your browser.');
+      return;
+    }
+    
+    var user = getUser();
+    if (!user) {
+      // Enforce login
+      window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname);
+      return;
+    }
+    var statusEl = document.getElementById('auth-status');
+    statusEl.textContent = 'Logged in as ' + (user.name || user.email);
+    
+    // Check for Edit Mode
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get('id');
+    const isEdit = !!editId;
+    const typeParam = params.get('type');
+    
+    // Set initial type
+    if (typeParam === 'reel') {
+        setType('reel');
+    }
+
+    if (isEdit) {
+      document.querySelector('h2').textContent = 'Edit Recipe';
+      document.querySelector('button[type="submit"]').textContent = 'Update Recipe';
+      
+      fetch('/recipes/' + editId)
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok && data.recipe) {
+            const r = data.recipe;
+            var form = document.getElementById('add-recipe-form');
+            
+            // Check if it's a Reel
+            if (r.category === 'Reels' || (r.video && !r.category)) {
+                setType('reel');
+            }
+
+            form.querySelector('[name="name"]').value = r.name;
+            if (form.querySelector('[name="category"]')) form.querySelector('[name="category"]').value = r.category;
+            form.querySelector('[name="prep_time"]').value = r.prep_time || '';
+            form.querySelector('[name="cook_time"]').value = r.cook_time || '';
+            form.querySelector('[name="servings"]').value = r.servings || '';
+            form.querySelector('[name="calories"]').value = r.calories || '';
+            form.querySelector('[name="intro"]').value = r.intro || '';
+            form.querySelector('[name="ingredients"]').value = Array.isArray(r.ingredients) ? r.ingredients.join('\n') : r.ingredients;
+            form.querySelector('[name="instructions"]').value = Array.isArray(r.instructions) ? r.instructions.join('\n') : r.instructions;
+            
+            // Populating image even if local, so it is preserved on save
+            if (r.image) {
+              form.querySelector('[name="image"]').value = r.image;
+            }
+            if (r.video || r.video_url) {
+              form.querySelector('[name="video_url"]').value = r.video || r.video_url;
+            }
+          } else {
+            alert('Recipe not found');
+          }
+        })
+        .catch(e => console.error(e));
+    }
+
+    var form = document.getElementById('add-recipe-form');
+    
+    window.setType = function(type) {
+        document.getElementById('form-type').value = type;
+        const recipeFields = document.getElementById('recipe-fields');
+        const recipeDetails = document.getElementById('recipe-details');
+        const catSelect = document.getElementById('category-select');
+        const vidFile = document.getElementById('video-file');
+        const vidLabel = document.getElementById('video-label');
+        
+        const btnRecipe = document.getElementById('type-recipe');
+        const btnReel = document.getElementById('type-reel');
+
+        if (type === 'reel') {
+            recipeFields.style.display = 'none';
+            recipeDetails.style.display = 'none';
+            catSelect.removeAttribute('required');
+            vidFile.removeAttribute('required'); // Not strictly required if URL is provided
+            vidLabel.textContent = 'Upload Video (Max 2GB) OR provide URL below';
+            
+            btnRecipe.style.background = '#fff';
+            btnRecipe.style.fontWeight = 'normal';
+            btnReel.style.background = '#f5f5f5';
+            btnReel.style.fontWeight = 'bold';
+            btnReel.classList.add('active');
+            btnRecipe.classList.remove('active');
+        } else {
+            recipeFields.style.display = 'block';
+            recipeDetails.style.display = 'block';
+            catSelect.setAttribute('required', 'required');
+            vidFile.removeAttribute('required');
+            vidLabel.textContent = 'Upload Video (Max 2GB)';
+
+            btnRecipe.style.background = '#f5f5f5';
+            btnRecipe.style.fontWeight = 'bold';
+            btnReel.style.background = '#fff';
+            btnReel.style.fontWeight = 'normal';
+            btnRecipe.classList.add('active');
+            btnReel.classList.remove('active');
+        }
+    };
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      var type = document.getElementById('form-type').value;
+      var name = fd.get('name');
+      var cat = fd.get('category');
+      
+      // Validation for Reel
+      if (type === 'reel') {
+          // If reel, category is not required, but we should handle it
+          if (!name) { alert('Title is required'); return; }
+          // Video check (either file or url)
+          var vFile = document.getElementById('video-file').files[0];
+          var vUrl = fd.get('video_url');
+          if (!vFile && !vUrl) {
+              alert('Please upload a video or provide a URL for your Reel.');
+              return;
+          }
+      } else {
+          // Recipe validation
+          if (!name || !cat) return;
+      }
+
+      var formData = new FormData();
+      // For Create, we generate ID. For Edit, we might send ID or not (server uses URL param).
+      // But we can just reuse the formData construction for both.
+      
+      if (!isEdit) {
+         formData.append('id', slugify(name) + '-' + Date.now());
+         formData.append('author', user.name || user.email);
+         formData.append('author_id', user.id);
+      }
+      
+      formData.append('name', name);
+      // For Reel, send empty category or "Reels"
+      formData.append('category', type === 'reel' ? 'Reels' : cat);
+      formData.append('prep_time', fd.get('prep_time'));
+      formData.append('cook_time', fd.get('cook_time'));
+      formData.append('servings', fd.get('servings'));
+      formData.append('calories', fd.get('calories'));
+      formData.append('intro', fd.get('intro'));
+      
+      // Handle array inputs for ingredients/instructions
+      // If Reel, these might be empty, which is fine
+      formData.append('ingredients', fd.get('ingredients'));
+      formData.append('instructions', fd.get('instructions'));
+      
+      var imgFile = document.getElementById('image-file').files[0];
+      if (imgFile) {
+        formData.append('image_file', imgFile);
+      } else if (fd.get('image')) {
+        formData.append('image', fd.get('image'));
+      }
+      
+      var videoFile = document.getElementById('video-file').files[0];
+      if (videoFile) {
+        formData.append('video', videoFile);
+      }
+      formData.append('video_url', fd.get('video_url'));
+
+      var btn = form.querySelector('button[type="submit"]');
+      var origText = btn.textContent;
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      if (isEdit) {
+        // EDIT MODE (PUT) - Now using FormData
+        fetch('/recipes/' + editId, {
+            method: 'PUT',
+            body: formData
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok) {
+                alert('Recipe updated!');
+                window.location.href = 'admin.html';
+            } else {
+                alert('Error updating: ' + (res.error || 'Unknown error'));
+            }
+            btn.textContent = origText;
+            btn.disabled = false;
+        })
+        .catch(e => {
+            console.error(e);
+            alert('Error updating');
+            btn.textContent = origText;
+            btn.disabled = false;
+        });
+        return;
+      }
+
+      // CREATE MODE (POST)
+      fetch('/recipes/create', {
+        method: 'POST',
+        body: formData
+      }).then(function (r) {
+        if (!r.ok) {
+           return r.json().then(function(err) { throw new Error(err.error || 'Server error ' + r.status); });
+        }
+        return r.json();
+      }).then(function (res) {
+        if (res.ok) {
+          alert('Recipe saved!');
+          // localStorage logic removed to rely on server
+          window.location.href = 'recipes.html';
+        } else {
+          throw new Error(res.error || 'Unknown error');
+        }
+      }).catch(function (e) {
+        console.error(e);
+        if (e.message.indexOf('Failed to fetch') !== -1) {
+          alert('Error: Could not connect to the server. Please ensure the server is running.');
+        } else {
+          alert('Error: ' + e.message);
+        }
+        btn.textContent = origText;
+        btn.disabled = false;
+      });
+    });
+  })();
+</script>
+</html>

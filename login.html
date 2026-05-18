@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    body { 
+      background: linear-gradient(135deg, #f6fffb 0%, #ffffff 60%) no-repeat fixed;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .auth-container { 
+      max-width: 480px; 
+      margin: 64px auto; 
+      padding: 3rem; 
+      background: #ffffff; 
+      border-radius: 16px; 
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08); 
+      border: 1px solid #eef2f3;
+    }
+    .brand-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2f6c4f;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .tabs { 
+      display: flex; 
+      background: #edf2f7; 
+      padding: 6px; 
+      border-radius: 999px; 
+      margin-bottom: 2rem; 
+    }
+    .tab { 
+      flex: 1; 
+      text-align: center; 
+      padding: 10px 14px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      color: #5a6b63; 
+      border-radius: 999px;
+      transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+    .tab:hover { transform: translateY(-1px); }
+    .tab.active { 
+      background: #3E7F62; 
+      color: #ffffff; 
+      box-shadow: 0 6px 12px rgba(62,127,98,0.25);
+    }
+    #form-title {
+      text-align: center; 
+      margin-bottom: 1.25rem; 
+      font-size: 1.25rem; 
+      color: #44514b; 
+      font-weight: 600;
+    }
+    .mode-switch { 
+      text-align: center; 
+      margin-top: 1.25rem; 
+      font-size: 0.95em; 
+      color: #667a71; 
+    }
+    .mode-switch a { 
+      color: #2f6c4f; 
+      cursor: pointer; 
+      text-decoration: none; 
+      font-weight: 700; 
+    }
+    .mode-switch a:hover { text-decoration: underline; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { 
+      display: block; 
+      margin-bottom: 0.5rem; 
+      color: #3b4a43; 
+      font-weight: 600; 
+      font-size: 0.95rem; 
+    }
+    .form-group input { 
+      width: 100%; 
+      padding: 0.9rem; 
+      border: 1px solid #dde5e8; 
+      border-radius: 12px; 
+      box-sizing: border-box; 
+      font-size: 1rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      background: #fafcfd;
+    }
+    .form-group input:focus { 
+      border-color: #3E7F62; 
+      outline: none; 
+      box-shadow: 0 0 0 3px rgba(62,127,98,0.15);
+      background: #ffffff;
+    }
+    .btn-block { 
+      width: 100%; 
+      padding: 0.9rem; 
+      background: linear-gradient(135deg, #3E7F62 0%, #2e604a 100%); 
+      color: #ffffff; 
+      border: none; 
+      border-radius: 12px; 
+      cursor: pointer; 
+      font-size: 1rem; 
+      font-weight: 700;
+      transition: filter 0.15s ease, transform 0.05s ease;
+    }
+    .btn-block:hover { filter: brightness(0.95); }
+    .btn-block:active { transform: translateY(1px); }
+    .error { 
+      background: #ffe9ea; 
+      color: #c62828; 
+      padding: 12px; 
+      border-radius: 12px; 
+      text-align: center; 
+      margin-bottom: 1rem; 
+      display: none; 
+      font-size: 0.95rem;
+      border: 1px solid #ffd1d4;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="inner">
+      <a href="index.html" class="logo">CookVala</a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="auth-container">
+      <div class="brand-title">CookVala</div>
+      <div class="tabs">
+        <div class="tab active" onclick="setRole('user')">User</div>
+        <div class="tab" onclick="setRole('admin')">Admin</div>
+      </div>
+
+      <h2 id="form-title" style="text-align: center; margin-bottom: 1.5rem; font-size: 1.2rem; color: #555; font-weight: normal;">User Login</h2>
+      <div id="error-msg" class="error"></div>
+
+      <form id="auth-form">
+        <div class="form-group hidden" id="name-group">
+          <label>Full Name</label>
+          <input type="text" id="name" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" required placeholder="******">
+        </div>
+        <div id="forgot-password-link" style="text-align: right; margin-bottom: 1rem;">
+          <a onclick="showForgotPassword()" style="color: #2f6c4f; cursor: pointer; font-size: 0.9rem; text-decoration: none;">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn-block" id="submit-btn">Login</button>
+      </form>
+
+      <div class="mode-switch">
+        <span id="switch-text">Don't have an account?</span>
+        <a onclick="toggleMode()" id="switch-link">Sign Up</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 CookVala. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let currentRole = 'user';
+    let isLogin = true;
+    let isForgotPassword = false;
+
+    function setRole(role) {
+      if (isForgotPassword) return; // Disable role switching in forgot password mode
+      currentRole = role;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      updateUI();
+    }
+
+    function toggleMode() {
+      isLogin = !isLogin;
+      isForgotPassword = false;
+      updateUI();
+    }
+
+    function showForgotPassword() {
+      isForgotPassword = true;
+      updateUI();
+    }
+
+    function updateUI() {
+      const title = document.getElementById('form-title');
+      const nameGroup = document.getElementById('name-group');
+      const passwordGroup = document.getElementById('password').parentElement;
+      const forgotLink = document.getElementById('forgot-password-link');
+      const submitBtn = document.getElementById('submit-btn');
+      const switchText = document.getElementById('switch-text');
+      const switchLink = document.getElementById('switch-link');
+      const errorMsg = document.getElementById('error-msg');
+      const tabs = document.querySelector('.tabs');
+
+      errorMsg.style.display = 'none';
+      errorMsg.className = 'error';
+
+      if (isForgotPassword) {
+        title.textContent = 'Forgot Password';
+        nameGroup.classList.add('hidden');
+        passwordGroup.classList.add('hidden');
+        forgotLink.classList.add('hidden');
+        tabs.style.opacity = '0.5';
+        tabs.style.pointerEvents = 'none';
+        
+        document.getElementById('name').required = false;
+        document.getElementById('password').required = false;
+        
+        submitBtn.textContent = 'Send Reset Link';
+        switchText.textContent = 'Remember your password?';
+        switchLink.textContent = 'Back to Login';
+        switchLink.onclick = () => {
+          isForgotPassword = false;
+          updateUI();
+        };
+      } else {
+        tabs.style.opacity = '1';
+        tabs.style.pointerEvents = 'auto';
+        passwordGroup.classList.remove('hidden');
+        document.getElementById('password').required = true;
+
+        if (isLogin) {
+          title.textContent = (currentRole === 'admin' ? 'Admin' : 'User') + ' Login';
+          nameGroup.classList.add('hidden');
+          forgotLink.classList.remove('hidden');
+          document.getElementById('name').required = false;
+          submitBtn.textContent = 'Login';
+          switchText.textContent = "Don't have an account?";
+          switchLink.textContent = 'Sign Up';
+          switchLink.onclick = toggleMode;
+        } else {
+          title.textContent = (currentRole === 'admin' ? 'Create Admin Account' : 'Create User Account');
+          nameGroup.classList.remove('hidden');
+          forgotLink.classList.add('hidden');
+          document.getElementById('name').required = true;
+          submitBtn.textContent = 'Sign Up';
+          switchText.textContent = "Already have an account?";
+          switchLink.textContent = 'Login';
+          switchLink.onclick = toggleMode;
+        }
+      }
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const name = document.getElementById('name').value;
+      const errorMsg = document.getElementById('error-msg');
+      
+      let endpoint;
+      let body = { email };
+
+      if (isForgotPassword) {
+        endpoint = '/auth/forgot-password';
+      } else {
+        endpoint = isLogin ? '/auth/login' : '/auth/signup';
+        body.password = password;
+        body.role = currentRole;
+        if (!isLogin) body.name = name;
+      }
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          if (isForgotPassword) {
+            errorMsg.textContent = data.message;
+            errorMsg.style.display = 'block';
+            errorMsg.style.backgroundColor = '#e6fffa';
+            errorMsg.style.color = '#2c7a7b';
+            errorMsg.style.borderColor = '#b2f5ea';
+            return;
+          }
+
+          localStorage.setItem('tt_user', JSON.stringify({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            role: data.role
+          }));
+          
+          const params = new URLSearchParams(window.location.search);
+          const next = params.get('next') || 'index.html';
+          
+          if (data.role === 'admin') {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = next;
+          }
+        } else {
+          errorMsg.textContent = data.error || 'Operation failed';
+          errorMsg.style.display = 'block';
+          errorMsg.style.backgroundColor = '#ffe9ea';
+          errorMsg.style.color = '#c62828';
+          errorMsg.style.borderColor = '#ffd1d4';
+        }
+      } catch (err) {
+        console.error('Auth error details:', err);
+        errorMsg.textContent = 'Network error: ' + err.message;
+        errorMsg.style.display = 'block';
+        errorMsg.style.backgroundColor = '#ffe9ea';
+        errorMsg.style.color = '#c62828';
+        errorMsg.style.borderColor = '#ffd1d4';
+      }
+    });
+  </script>
+</body>
+</html>

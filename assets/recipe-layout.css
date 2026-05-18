@@ -1,0 +1,334 @@
+/* Recipe Page New Layout */
+
+/* Global Overrides for Recipe Pages */
+body.recipe-page {
+  background: #fff; /* Main background seems white in screenshot, boxes have color */
+}
+
+/* Hero Section */
+.recipe-hero {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+.recipe-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid white;
+}
+.play-btn {
+  width: 0;
+  height: 0;
+  border-left: 25px solid #E67E22;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  margin-left: 5px;
+}
+
+/* Header Section */
+.recipe-header {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.recipe-header h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 42px;
+  color: #222;
+  margin-bottom: 15px;
+}
+.recipe-desc {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.recipe-meta-row {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  align-items: center;
+  color: #444;
+  font-weight: 500;
+  font-size: 15px;
+}
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.meta-item i { color: #E67E22; }
+
+/* Main Layout Grid */
+.recipe-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+
+/* Left Column */
+.recipe-main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Video Section */
+.video-wrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+.video-wrapper video {
+  width: 100%;
+  display: block;
+}
+.video-label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  background: #6B705C;
+  color: white;
+  padding: 5px 15px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Action Buttons (Horizontal) */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+.btn-save {
+  flex: 1;
+  background: #C05826;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-save:hover { opacity: 0.9; }
+
+.btn-secondary {
+  flex: 1;
+  background: #F5EBE0;
+  color: #444;
+  border: 1px solid #E6D5C4;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: #EBDCCF; }
+
+/* Section Headers (Ribbon Style) */
+.section-title {
+  background: #6B705C;
+  color: white;
+  padding: 8px 20px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 4px 20px 20px 4px; /* Ribbon shapeish */
+  margin-bottom: 20px;
+  position: relative;
+}
+.section-title.tips-title {
+  background: #8F7658;
+}
+
+/* Ingredients List */
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ingredients-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.5;
+}
+.ing-check {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #E67E22;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+/* Instructions List */
+.instructions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.instructions-list li {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.step-num {
+  min-width: 28px;
+  height: 28px;
+  background: #C05826;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* Tips Box */
+.tips-box {
+  background: #FAF8F5;
+  border: 1px solid #EEE;
+  padding: 20px;
+  border-radius: 8px;
+}
+.tips-list {
+  list-style: none;
+  padding: 0;
+}
+.tips-list li {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+}
+.tips-list li::before {
+  content: "🌿"; /* Leaf icon */
+  color: #6B705C;
+}
+
+/* Sidebar */
+.recipe-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Info Box */
+.info-box {
+  background: #FFF9F2;
+  border: 1px solid #F5E6D3;
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+}
+.info-header {
+  padding: 15px;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid #F5E6D3;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  border-bottom: 1px solid #F5E6D3;
+  font-size: 14px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: #666; }
+.info-val { font-weight: 600; }
+
+/* Nutrition Box */
+.nutrition-box {
+  background: #FDF6F0;
+  border: 1px solid #E6D5C4;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.nut-header {
+  background: #4A4A4A;
+  color: white;
+  padding: 12px 15px;
+  font-weight: bold;
+}
+.nut-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-bottom: 1px solid #E6D5C4;
+  font-size: 14px;
+}
+.nut-row:last-child { border-bottom: none; }
+
+/* Reviews Section */
+.reviews-section {
+  background: #FAFAFA;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #EEE;
+}
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.review-stars { color: #F5B301; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .recipe-container {
+    grid-template-columns: 1fr;
+  }
+  .recipe-hero {
+    height: 300px;
+  }
+  .recipe-header h1 {
+    font-size: 32px;
+  }
+}

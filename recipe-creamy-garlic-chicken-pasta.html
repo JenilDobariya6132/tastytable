@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Creamy Garlic Chicken Pasta | CookVala</title>
+  <meta name="description" content="Velvety Creamy Garlic Chicken Pasta in 30 minutes with tender chicken and rich Parmesan sauce.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/recipe-style-modern.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Using FontAwesome CDN for icons as seen in the design -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="recipe-page">
+  <!-- Header (Nav) -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Image (Full Width) -->
+  <div class="recipe-hero">
+    <img id="r-image" src="assets/Creamy Garlic Chicken Pasta.jpg" alt="Creamy Garlic Chicken Pasta">
+    <div class="play-overlay">
+      <div class="play-btn"></div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Header Content -->
+    <div class="wrap"> <!-- Using wrap to constrain width if needed, but recipe-container handles it -->
+      <div class="recipe-header" style="max-width: 1100px; margin: 0 auto 40px; padding: 40px 20px; border-bottom: 1px solid #ddd;">
+        <h1 id="r-title">Creamy Garlic Chicken Pasta</h1>
+        <p class="recipe-desc" id="r-intro">A rich, comforting pasta made with tender chicken and garlic cream sauce.</p>
+        <div class="recipe-meta-row">
+           <div class="meta-item">
+             <span class="rating-stars"><i class="fas fa-star"></i> 4.8</span>
+             <span style="color:#777; margin-left:5px;">(259 Reviews)</span>
+           </div>
+           <span class="meta-separator">|</span>
+           <span class="meta-item"><i class="far fa-clock meta-icon"></i> 30 min</span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item"><i class="fas fa-utensils meta-icon"></i> Serves: 4</span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item"><span style="font-weight:bold;">620</span> Calories</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="recipe-container">
+      <!-- Left Main Content -->
+      <div class="recipe-main">
+         
+         <!-- Video Section -->
+         <div class="video-wrapper">
+           <div class="video-label">Watch Video</div>
+           <!-- Placeholder for video, using image for now as in design it looks like a thumbnail -->
+           <img src="assets/Creamy Garlic Chicken Pasta.jpg" style="width:100%; display:block; filter: brightness(0.9);" alt="Recipe Video">
+           <div class="play-overlay" style="width:60px; height:60px;">
+             <div class="play-btn" style="border-left-width: 18px; border-top-width: 10px; border-bottom-width: 10px;"></div>
+           </div>
+           <div style="position:absolute; bottom:20px; left:20px; color:white; font-family:'Playfair Display', serif; font-size:24px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+             Creamy Garlic Chicken Pasta Recipe
+           </div>
+           <div style="position:absolute; bottom:20px; right:20px; color:white; background:rgba(0,0,0,0.6); padding:2px 8px; border-radius:4px; font-size:12px;">
+             1:58
+           </div>
+         </div>
+
+         
+         
+
+         <!-- Ingredients (Checklist) -->
+         <!-- Note: Design shows "Ingredients" header but numbered steps. I will follow standard practice and put Ingredients first, then Instructions. -->
+         <!-- Wait, to match the "Visual Style" exactly, maybe I should use the headers from the image? 
+              The image has "Ingredients" header -> Numbered List (Instructions).
+              Then "Tips & Variations" header -> Leaf List.
+              Where are the actual ingredients? Maybe in the sidebar? 
+              No, sidebar has Info and Nutrition.
+              I will assume the image labels are confusing and I should produce a functional page.
+              I will put Ingredients (Checklist) and then Instructions (Numbered).
+         -->
+         
+         <div id="ingredients-section">
+           <div class="section-title">Ingredients</div>
+           <ul class="ingredients-list" id="r-ingredients">
+              <!-- Using checklist style for actual ingredients -->
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                <span>8 oz pasta (fettuccine or penne)</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                <span>2 chicken breasts, thinly sliced</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                <span>4 cloves garlic, minced</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>2 tbsp olive oil</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>2 tbsp unsalted butter</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>1 cup low-sodium chicken broth</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>1 cup heavy cream</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>1 cup grated Parmesan</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>1 tbsp lemon juice</span>
+              </li>
+              <li style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                 <div style="width:20px; height:20px; background:#E67E22; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:12px;">✓</div>
+                 <span>2 tbsp chopped parsley</span>
+              </li>
+           </ul>
+         </div>
+
+         <!-- Instructions -->
+         <div>
+           <div class="section-title">Instructions</div>
+           <ol class="instructions-list" id="r-instructions">
+              <li><div class="step-num">1</div><span>Cook the pasta in salted water until al dente.</span></li>
+              <li><div class="step-num">2</div><span>Saute the chicken until golden brown.</span></li>
+              <li><div class="step-num">3</div><span>Add garlic and cook until fragrant.</span></li>
+              <li><div class="step-num">4</div><span>Pour in the cream and Parmesan, simmer until thickened.</span></li>
+              <li><div class="step-num">5</div><span>Mix in the pasta and toss to coat. Serve hot.</span></li>
+           </ol>
+         </div>
+
+         <!-- Tips -->
+         <div class="tips-box">
+           <div class="section-title tips-header">Tips & Variations</div>
+           <ul class="tips-list">
+             <li><i class="fas fa-leaf tip-icon"></i> Use shrimp instead of chicken.</li>
+             <li><i class="fas fa-leaf tip-icon"></i> For a lighter version use half-and-half.</li>
+             <li><i class="fas fa-leaf tip-icon"></i> Add spinach or sun-dried tomatoes.</li>
+           </ul>
+         </div>
+         
+         <div style="margin-top: 30px;">
+             <h3 style="font-family:'Playfair Display', serif; margin-bottom:15px;">You May Also Like</h3>
+             <hr style="border:0; border-top:1px solid #ddd;">
+             <!-- Placeholder for related -->
+         </div>
+
+      </div>
+
+      <!-- Right Sidebar -->
+      <div class="recipe-sidebar">
+        
+        <!-- Author Box -->
+        <div class="author-box">
+           <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sara Miller" class="author-img">
+           <div class="author-name">Sara Miller</div>
+           <div class="author-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <span style="color:#999; font-size:12px; margin-left:5px;">2.3k reviews</span>
+           </div>
+           <p class="author-bio">Hi, I'm Sara! I love sharing my favorite recipes with fellow foodies. Thanks for stopping by, happy cooking!</p>
+           
+           <button class="btn-follow"><i class="fas fa-heart"></i> Follow</button>
+           <button class="btn-outline" style="width:100%; padding:8px; display:flex; justify-content:center; gap:5px; margin-bottom:15px;">
+             <i class="fas fa-envelope"></i> <i class="fas fa-envelope-open"></i>
+           </button>
+           
+           <div class="author-stats">
+              <span><i class="fas fa-user-friends"></i> 15.2k followers</span>
+              <span><i class="fas fa-book"></i> 274 recipes</span>
+           </div>
+           
+           <div class="author-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-pinterest-p"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+           </div>
+        </div>
+
+        <!-- Recipe Info Box -->
+        <div class="sidebar-info-box">
+          <div class="sidebar-header">Recipe Info</div>
+          <div class="sidebar-row"><span class="sidebar-label">Prep Time</span><span class="sidebar-val">10 min</span></div>
+          <div class="sidebar-row"><span class="sidebar-label">Cook Time</span><span class="sidebar-val">20 min</span></div>
+          <div class="sidebar-row"><span class="sidebar-label">Total Time</span><span class="sidebar-val">30 min</span></div>
+          <div class="sidebar-row"><span class="sidebar-label">Difficulty</span><span class="sidebar-val">Easy</span></div>
+          <div class="sidebar-row"><span class="sidebar-label">Cuisine</span><span class="sidebar-val" id="r-cuisine">Italian</span></div>
+        </div>
+
+        <!-- Duplicate Info Box (as per image, but maybe Nutrition?) -->
+        
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap cols">
+      <div>
+        <h3>TastyTable</h3>
+        <p>TastyTable shares easy, healthy, and budget-friendly recipes for real life.</p>
+        <small>© 2025 TastyTable. All rights reserved.</small>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a> · <a href="recipes.html">Recipes</a> · <a href="blog.html">Blog</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a></p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <p>Instagram · Pinterest · YouTube</p>
+      </div>
+      <div class="nl">
+        <h4>Newsletter</h4>
+        <form>
+          <input type="email" placeholder="you@example.com" aria-label="Email">
+          <button type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/auth-nav.js"></script>
+</body>
+<script src="assets/recipe-actions.js"></script>
+</html>

@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Profile | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    /* Dashboard Grid & Cards */
+    .dashboard-stats { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .stat-card { 
+        background: #fff; 
+        padding: 1.5rem; 
+        border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        flex: 1; 
+        min-width: 200px; 
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .stat-info div:first-child { font-size: 2.5rem; font-weight: bold; color: #3E7F62; }
+    .stat-info div:last-child { color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .stat-icon {
+        width: 50px; height: 50px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        background: #eee;
+    }
+    .icon-green { background: #e8f5e9; color: #2e7d32; }
+    .icon-blue { background: #e3f2fd; color: #1565c0; }
+    .icon-purple { background: #f3e5f5; color: #7b1fa2; }
+    .icon-orange { background: #fff3e0; color: #ef6c00; }
+    .icon-red { background: #ffebee; color: #c62828; }
+
+    .profile-header {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: #eee;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #888;
+      font-weight: bold;
+    }
+    .profile-info h1 { margin: 0 0 0.5rem 0; font-size: 1.8rem; }
+    .profile-info p { margin: 0; color: #666; }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: 1rem 2rem;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active {
+      color: #3E7F62;
+      border-bottom-color: #3E7F62;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1000;
+        display: none; justify-content: center; align-items: center;
+    }
+    .modal {
+        background: #fff; padding: 2rem; border-radius: 8px;
+        width: 90%; max-width: 400px;
+    }
+    .modal h2 { margin-top: 0; }
+    .modal input {
+        width: 100%; padding: 10px; margin-bottom: 10px;
+        border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-primary { background: #3E7F62; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    .btn-outline { background: #fff; color: #333; border: 1px solid #ddd; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    .btn-danger { background: #e74c3c; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <div id="profile-loading" style="text-align: center; padding: 4rem;">Loading profile...</div>
+    
+    <div id="profile-container" style="display: none;">
+      <section class="profile-header">
+        <div class="profile-avatar" id="avatar-placeholder">U</div>
+        <div class="profile-info">
+          <h1 id="user-name">User Name</h1>
+          <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;">
+            <button id="edit-profile-btn" class="btn-outline" style="display:none; font-size: 0.8rem; padding: 4px 8px;" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
+            <button id="change-password-btn" class="btn-outline" style="display:none; font-size: 0.8rem; padding: 4px 8px;" onclick="openPasswordModal()"><i class="fas fa-key"></i> Change Password</button>
+            <button id="delete-account-btn" class="btn-danger" style="display:none; font-size: 0.8rem; padding: 4px 8px;" onclick="deleteAccount()"><i class="fas fa-trash"></i> Delete Account</button>
+          </div>
+          <div id="other-user-actions" style="display:none; gap:10px; margin-bottom: 0.5rem;">
+            <button id="follow-btn" class="btn-primary" onclick="toggleFollow()">Follow</button>
+            <button id="message-btn" class="btn-outline" onclick="startChat()">Message</button>
+          </div>
+          <p id="user-email">user@example.com</p>
+          <p><small>User ID: <span id="user-id">#</span></small></p>
+        </div>
+      </section>
+
+      <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-info">
+                <div id="stat-saved">0</div>
+                <div>Saved</div>
+            </div>
+            <div class="stat-icon icon-orange"><span class="material-icons-outlined">bookmark</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <div id="stat-uploaded">0</div>
+                <div>Uploaded</div>
+            </div>
+            <div class="stat-icon icon-green"><span class="material-icons-outlined">restaurant_menu</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <div id="stat-viewed">0</div>
+                <div>Viewed</div>
+            </div>
+            <div class="stat-icon icon-purple"><span class="material-icons-outlined">visibility</span></div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
+                <div id="stat-followers">0</div>
+                <div>Followers</div>
+            </div>
+            <div class="stat-icon icon-blue"><span class="material-icons-outlined">people</span></div>
+        </div>
+
+         <div class="stat-card">
+            <div class="stat-info">
+                <div id="stat-following">0</div>
+                <div>Following</div>
+            </div>
+            <div class="stat-icon icon-blue"><span class="material-icons-outlined">person_add</span></div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('saved')">Saved Recipes <span id="tab-count-saved"></span></button>
+        <button class="tab-btn" onclick="switchTab('uploaded')">My Recipes <span id="tab-count-uploaded"></span></button>
+        <button class="tab-btn" onclick="switchTab('viewed')">Recently Viewed <span id="tab-count-viewed"></span></button>
+        <button class="tab-btn" onclick="switchTab('followers')">Followers <span id="tab-count-followers"></span></button>
+        <button class="tab-btn" onclick="switchTab('following')">Following <span id="tab-count-following"></span></button>
+      </div>
+
+      <div id="tab-saved" class="tab-content active">
+        <div class="list" id="saved-list">
+          <!-- Recipes loaded here -->
+        </div>
+      </div>
+      <div id="tab-uploaded" class="tab-content">
+        <div class="list" id="uploaded-list">
+          <!-- Recipes loaded here -->
+        </div>
+      </div>
+      <div id="tab-viewed" class="tab-content">
+        <div class="list" id="viewed-list">
+          <!-- Recipes loaded here -->
+        </div>
+      </div>
+      <div id="tab-followers" class="tab-content">
+        <div class="list" id="followers-list"></div>
+      </div>
+      <div id="tab-following" class="tab-content">
+        <div class="list" id="following-list"></div>
+      </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Edit Profile</h2>
+            <form id="edit-profile-form">
+                <label>Name</label>
+                <input type="text" id="edit-name" required>
+                <label>Email</label>
+                <input type="email" id="edit-email" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-outline" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Change Password</h2>
+            <form id="change-password-form">
+                <label>Old Password</label>
+                <input type="password" id="old-password" required>
+                <label>New Password</label>
+                <input type="password" id="new-password" required minlength="6">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirm-password" required minlength="6">
+                <div class="modal-actions">
+                    <button type="button" class="btn-outline" onclick="closePasswordModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </main>
+  
+  <footer class="footer">
+    <div class="wrap cols">
+        <div>
+          <h3>CookVala</h3>
+          <p>CookVala shares easy, healthy, and budget-friendly recipes for real life.</p>
+          <small>© 2025 CookVala. All rights reserved.</small>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <p><a href="index.html">Home</a> · <a href="recipes.html">Recipes</a> · <a href="blog.html">Blog</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a></p>
+        </div>
+    </div>
+  </footer>
+
+  <script src="assets/auth-nav.js"></script>
+  <script>
+    const loggedInUser = JSON.parse(localStorage.getItem('tt_user') || 'null');
+    
+    const params = new URLSearchParams(window.location.search);
+    // If user_id is in URL, use it. Otherwise use loggedInUser.id
+    const targetUserId = params.get('user_id') || (loggedInUser ? loggedInUser.id : null);
+
+    if (!targetUserId) {
+        window.location.href = 'login.html';
+    }
+
+    const isOwnProfile = loggedInUser && (String(loggedInUser.id) === String(targetUserId));
+
+    // Adjust UI for other user
+    if (!isOwnProfile) {
+        document.title = 'User Profile | TastyTable';
+        // Hide private tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            const txt = btn.textContent.trim();
+            if (txt === 'Saved Recipes' || txt === 'Recently Viewed') {
+                btn.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('other-user-actions').style.display = 'flex';
+        checkRelationship();
+    }
+
+    let isFollowing = false;
+
+    async function checkRelationship() {
+        if (!loggedInUser) return;
+        try {
+            const res = await fetch(`/users/${targetUserId}/relationship?viewer_id=${loggedInUser.id}`);
+            const data = await res.json();
+            if (data.ok) {
+                isFollowing = data.following;
+                updateFollowBtn();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function updateFollowBtn() {
+        const btn = document.getElementById('follow-btn');
+        if (isFollowing) {
+            btn.textContent = 'Unfollow';
+            btn.className = 'btn-outline';
+        } else {
+            btn.textContent = 'Follow';
+            btn.className = 'btn-primary';
+        }
+    }
+
+    async function toggleFollow() {
+        if (!loggedInUser) {
+            alert('Please login to follow users');
+            return;
+        }
+        
+        const action = isFollowing ? 'unfollow' : 'follow';
+        try {
+            const res = await fetch(`/users/${targetUserId}/${action}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ follower_id: loggedInUser.id })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                isFollowing = !isFollowing;
+                updateFollowBtn();
+                updateStats();
+            } else {
+                alert('Action failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Network error');
+        }
+    }
+
+    function startChat() {
+        if (!loggedInUser) {
+            alert('Please login to send messages');
+            return;
+        }
+        window.location.href = `messages.html?peer_id=${targetUserId}`;
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        const buttons = document.querySelectorAll('.tab-btn');
+        // Saved(0), Uploaded(1), Viewed(2), Followers(3), Following(4)
+        
+        if (tabName === 'saved') buttons[0].classList.add('active');
+        if (tabName === 'uploaded') buttons[1].classList.add('active');
+        if (tabName === 'viewed') buttons[2].classList.add('active');
+        if (tabName === 'followers') buttons[3].classList.add('active');
+        if (tabName === 'following') buttons[4].classList.add('active');
+
+        const content = document.getElementById('tab-' + tabName);
+        if (content) content.classList.add('active');
+        
+        loadTabContent(tabName);
+    }
+
+    function openEditModal() {
+        document.getElementById('edit-profile-modal').style.display = 'flex';
+        document.getElementById('edit-name').value = document.getElementById('user-name').textContent;
+        document.getElementById('edit-email').value = document.getElementById('user-email').textContent;
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-profile-modal').style.display = 'none';
+    }
+
+    function openPasswordModal() {
+        document.getElementById('change-password-modal').style.display = 'flex';
+    }
+
+    function closePasswordModal() {
+        document.getElementById('change-password-modal').style.display = 'none';
+        document.getElementById('change-password-form').reset();
+    }
+
+    if (isOwnProfile) {
+        const editBtn = document.getElementById('edit-profile-btn');
+        if (editBtn) editBtn.style.display = 'inline-block';
+        const pwBtn = document.getElementById('change-password-btn');
+        if (pwBtn) pwBtn.style.display = 'inline-block';
+        const deleteBtn = document.getElementById('delete-account-btn');
+        if (deleteBtn) deleteBtn.style.display = 'inline-block';
+    }
+
+    async function deleteAccount() {
+        if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/users/${loggedInUser.id}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            if (data.ok) {
+                localStorage.removeItem('tt_user');
+                alert('Account deleted successfully.');
+                window.location.href = 'index.html';
+            } else {
+                alert('Failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error');
+        }
+    }
+
+    document.getElementById('edit-profile-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('edit-name').value;
+        const email = document.getElementById('edit-email').value;
+
+        try {
+            const res = await fetch(`/users/${loggedInUser.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                document.getElementById('user-name').textContent = data.name;
+                document.getElementById('user-email').textContent = data.email;
+                document.getElementById('avatar-placeholder').textContent = data.name.charAt(0).toUpperCase();
+                
+                // Update local storage
+                const updatedUser = { ...loggedInUser, name: data.name, email: data.email };
+                localStorage.setItem('tt_user', JSON.stringify(updatedUser));
+                
+                closeEditModal();
+                alert('Profile updated successfully!');
+            } else {
+                alert('Failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error');
+        }
+    });
+
+    document.getElementById('change-password-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const oldPassword = document.getElementById('old-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (newPassword !== confirmPassword) {
+            alert('New passwords do not match');
+            return;
+        }
+
+        try {
+            const res = await fetch('/auth/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: loggedInUser.id, oldPassword, newPassword })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                closePasswordModal();
+                alert('Password updated successfully!');
+            } else {
+                alert('Failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error');
+        }
+    });
+
+    function renderRecipes(listId, recipes) {
+        const list = document.getElementById(listId);
+        list.innerHTML = '';
+        if (!recipes || recipes.length === 0) {
+            list.innerHTML = '<p>No recipes found.</p>';
+            return;
+        }
+
+        recipes.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'item card';
+            
+            // Image handling
+            let img = r.image;
+            if (!img) img = 'assets/download.jpg'; 
+            
+            // Link handling
+            let href = '';
+            if (r.is_static) {
+                href = r.id.replace('static-', '');
+            } else {
+                href = '/recipes/recipe-user.html?id=' + r.id;
+            }
+
+            div.innerHTML = `
+                <a href="${href}" class="img-link">
+                    <img src="${img}" alt="${r.name}" loading="lazy">
+                </a>
+                <div class="meta">
+                    <p>${r.category || 'Uncategorized'}</p>
+                    <h3><a href="${href}">${r.name}</a></h3>
+                    <div style="font-size: 0.8rem; color: #777; margin-top: 5px;">
+                        <i class="fas fa-eye"></i> ${(r.view_count || 0).toLocaleString()} views
+                        ${r.views_today > 0 ? `<span style="color:#27ae60; margin-left:5px;">(+${r.views_today} today)</span>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            if (listId === 'uploaded-list' && isOwnProfile) {
+                 const btn = document.createElement('button');
+                 const isPromoted = r.promotion_status === 'active';
+                 btn.innerHTML = isPromoted ? '<i class="fas fa-pause"></i> Depromote' : '<i class="fas fa-bullhorn"></i> Promote';
+                 btn.style.marginTop = '10px';
+                 btn.style.padding = '5px 10px';
+                 btn.style.border = 'none';
+                 btn.style.background = isPromoted ? '#7f8c8d' : '#e67e22';
+                 btn.style.color = '#fff';
+                 btn.style.borderRadius = '4px';
+                 btn.style.cursor = 'pointer';
+                 
+                 btn.onclick = function(e) {
+                     e.preventDefault();
+                     e.stopPropagation();
+                     const newStatus = isPromoted ? 'paused' : 'active';
+                     fetch('/recipes/' + r.id + '/promote', { 
+                         method: 'POST', 
+                         headers: {'Content-Type': 'application/json'}, 
+                         body: JSON.stringify({ user_id: loggedInUser.id, status: newStatus }) 
+                     })
+                     .then(res => res.json())
+                     .then(d => {
+                         if (d.ok) {
+                            alert('Status updated: ' + d.status);
+                            loadTabContent('uploaded');
+                         } else {
+                            alert('Failed: ' + d.error);
+                         }
+                     })
+                     .catch(err => alert('Network error'));
+                 };
+                 div.querySelector('.meta').appendChild(btn);
+            }
+
+            list.appendChild(div);
+        });
+    }
+
+    function renderUserList(listId, users, type) {
+        const list = document.getElementById(listId);
+        list.innerHTML = '';
+        if (!users || users.length === 0) {
+            list.innerHTML = '<p>No users found.</p>';
+            return;
+        }
+
+        users.forEach(u => {
+            const div = document.createElement('div');
+            div.className = 'item card';
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.style.padding = '1rem';
+            div.style.marginBottom = '1rem';
+            div.style.background = '#f9f9f9';
+            
+            const name = u.name || 'Unknown';
+            const id = u.id;
+            
+            let actionBtn = '';
+            if (isOwnProfile) {
+                if (type === 'followers') {
+                    actionBtn = `<button class="btn-danger" onclick="removeFollower(${id})" style="margin-left:auto; font-size:0.8rem;">Remove</button>`;
+                } else if (type === 'following') {
+                    actionBtn = `<button class="btn-outline" onclick="unfollowUser(${id})" style="margin-left:auto; font-size:0.8rem;">Unfollow</button>`;
+                }
+            }
+
+            div.innerHTML = `
+                <div style="width:50px; height:50px; background:#ddd; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:1rem; font-weight:bold; color:#666;">
+                    ${name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <h3 style="margin:0; font-size:1.1rem;"><a href="profile.html?user_id=${id}" style="text-decoration:none; color:#333;">${name}</a></h3>
+                    <small style="color:#888;">ID: ${id}</small>
+                </div>
+                ${actionBtn}
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    async function removeFollower(followerId) {
+        if (!confirm('Remove this follower?')) return;
+        try {
+            const res = await fetch(`/users/me/followers/${followerId}/remove`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: loggedInUser.id })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                loadTabContent('followers');
+                updateStats();
+            } else {
+                alert('Failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error removing follower');
+        }
+    }
+
+    async function unfollowUser(followingId) {
+        if (!confirm('Unfollow this user?')) return;
+        try {
+            const res = await fetch(`/users/${followingId}/unfollow`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ follower_id: loggedInUser.id })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                loadTabContent('following');
+                updateStats();
+            } else {
+                alert('Failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error unfollowing');
+        }
+    }
+
+    function updateStats() {
+        fetch('/user/profile?user_id=' + targetUserId)
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                const s = data.user.stats;
+                document.getElementById('stat-saved').textContent = s.saved;
+                document.getElementById('stat-uploaded').textContent = s.uploaded;
+                document.getElementById('stat-viewed').textContent = s.viewed;
+                document.getElementById('stat-followers').textContent = s.followers;
+                document.getElementById('stat-following').textContent = s.following;
+
+                // Update tabs
+                document.getElementById('tab-count-saved').textContent = `(${s.saved})`;
+                document.getElementById('tab-count-uploaded').textContent = `(${s.uploaded})`;
+                document.getElementById('tab-count-viewed').textContent = `(${s.viewed})`;
+                document.getElementById('tab-count-followers').textContent = `(${s.followers})`;
+                document.getElementById('tab-count-following').textContent = `(${s.following})`;
+            }
+        });
+    }
+
+    async function loadTabContent(tab) {
+        let url = '';
+        if (tab === 'saved') url = '/user/saved-recipes?user_id=' + targetUserId;
+        if (tab === 'uploaded') url = '/recipes/my?author_id=' + targetUserId;
+        if (tab === 'viewed') url = '/user/recent-recipes?user_id=' + targetUserId;
+        if (tab === 'followers') url = `/users/${targetUserId}/followers`;
+        if (tab === 'following') url = `/users/${targetUserId}/following`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (tab === 'followers') {
+                renderUserList('followers-list', (data.users || data.followers || []), 'followers');
+            } else if (tab === 'following') {
+                renderUserList('following-list', (data.users || data.following || []), 'following');
+            } else if (data.ok) {
+                if (tab === 'saved' || tab === 'uploaded' || tab === 'viewed') {
+                    renderRecipes(tab + '-list', data.recipes);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Load Profile Data
+    fetch('/user/profile?user_id=' + targetUserId)
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                document.getElementById('user-name').textContent = data.user.name;
+                document.getElementById('user-email').textContent = data.user.email;
+                document.getElementById('user-id').textContent = data.user.id;
+                document.getElementById('avatar-placeholder').textContent = (data.user.name || 'U').charAt(0).toUpperCase();
+                
+                const s = data.user.stats;
+                document.getElementById('stat-saved').textContent = s.saved;
+                document.getElementById('stat-uploaded').textContent = s.uploaded;
+                document.getElementById('stat-viewed').textContent = s.viewed;
+                document.getElementById('stat-followers').textContent = s.followers;
+                document.getElementById('stat-following').textContent = s.following;
+
+                // Update tabs
+                document.getElementById('tab-count-saved').textContent = `(${s.saved})`;
+                document.getElementById('tab-count-uploaded').textContent = `(${s.uploaded})`;
+                document.getElementById('tab-count-viewed').textContent = `(${s.viewed})`;
+                document.getElementById('tab-count-followers').textContent = `(${s.followers})`;
+                document.getElementById('tab-count-following').textContent = `(${s.following})`;
+
+                document.getElementById('profile-loading').style.display = 'none';
+                document.getElementById('profile-container').style.display = 'block';
+
+                // Initial Load
+                if (isOwnProfile) {
+                    switchTab('saved');
+                } else {
+                    switchTab('uploaded');
+                }
+            } else {
+                alert('Failed to load profile');
+            }
+        })
+        .catch(e => {
+            console.error(e);
+            alert('Error loading profile');
+        });
+
+  </script>
+</body>
+</html>

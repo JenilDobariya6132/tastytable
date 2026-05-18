@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Creator Dashboard | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    /* Dashboard Grid & Cards */
+    .dashboard-stats { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .stat-card { 
+        background: #fff; 
+        padding: 1.5rem; 
+        border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        flex: 1; 
+        min-width: 200px; 
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .stat-info div:first-child { font-size: 2.5rem; font-weight: bold; color: #3E7F62; }
+    .stat-info div:last-child { color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .stat-icon {
+        width: 50px; height: 50px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        background: #eee;
+    }
+    .icon-green { background: #e8f5e9; color: #2e7d32; }
+    .icon-blue { background: #e3f2fd; color: #1565c0; }
+    .icon-purple { background: #f3e5f5; color: #7b1fa2; }
+    .icon-orange { background: #fff3e0; color: #ef6c00; }
+
+    /* Controls & Table */
+    .dashboard-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    
+    .content-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .content-table th, .content-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+    .content-table th { background: #f8f9fa; font-weight: bold; color: #444; }
+    .content-table tr:last-child td { border-bottom: none; }
+    .content-table tr:hover { background-color: #fcfcfc; }
+    
+    .action-btn { padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; margin-right: 0.5rem; display: inline-block; cursor: pointer; border: none; }
+    .btn-edit { background: #e3f2fd; color: #1565c0; }
+    .btn-delete { background: #ffebee; color: #c62828; }
+    .btn-add { background: #3E7F62; color: #fff; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 4px; font-weight: bold; }
+    
+    .status-badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+    .status-published { background: #e8f5e9; color: #2e7d32; }
+    .status-draft { background: #fff3e0; color: #ef6c00; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala <span style="font-size: 0.6em; background: #3E7F62; color: #fff; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px;">CREATOR</span></div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="wrap" style="padding-top: 30px; padding-bottom: 50px;">
+    <section class="section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <div>
+            <h1>Creator Dashboard</h1>
+            <p style="color:#666">Manage your recipes and reels.</p>
+        </div>
+        <div id="user-welcome" style="color:#666"></div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-recipes">-</div>
+            <div>My Recipes</div>
+          </div>
+          <div class="stat-icon icon-green"><span class="material-icons-outlined">restaurant_menu</span></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-videos">-</div>
+            <div>My Reels</div>
+          </div>
+          <div class="stat-icon icon-blue"><span class="material-icons-outlined">play_circle_filled</span></div>
+        </div>
+
+         <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-views">-</div>
+            <div>Total Views</div>
+          </div>
+          <div class="stat-icon icon-purple"><span class="material-icons-outlined">visibility</span></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-earnings">$0.00</div>
+            <div>Earnings</div>
+          </div>
+          <div class="stat-icon icon-orange"><span class="material-icons-outlined">monetization_on</span></div>
+        </div>
+      </div>
+      
+      <!-- Content Management -->
+      <div class="dashboard-controls">
+        <h2>My Content</h2>
+        <div style="display:flex; gap:10px;">
+            <select id="filter-type" onchange="filterContent(this.value)" style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="all">All Content</option>
+                <option value="recipe">Recipes</option>
+                <option value="video">Reels</option>
+            </select>
+            <a href="add-recipe.html" class="btn-add">+ Add Recipe</a>
+            <a href="add-recipe.html?type=reel" class="btn-add" style="background:#333;">+ Add Reel</a>
+        </div>
+      </div>
+      
+      <div style="overflow-x: auto;">
+        <table class="content-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Views</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="content-table-body">
+            <tr><td colspan="6" style="text-align:center;">Loading content...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </section>
+  </main>
+  
+  <footer class="footer">
+    <div class="wrap" style="text-align: center;">
+      <small>© 2025 CookVala. All rights reserved.</small>
+    </div>
+  </footer>
+  
+  <script src="assets/auth-nav.js"></script>
+  <script>
+    (function() {
+      // 1. Check Login
+      const user = typeof getUser === 'function' ? getUser() : null;
+      if (!user) {
+        window.location.href = 'login.html?redirect=dashboard.html';
+        return;
+      }
+      document.getElementById('user-welcome').textContent = 'Welcome, ' + user.name;
+
+      // 2. Fetch Dashboard Data
+      let allContent = [];
+
+      fetch('/api/earnings/summary?user_id=' + user.id)
+        .then(r => r.json())
+        .then(data => {
+            // Update Stats
+            document.getElementById('count-recipes').textContent = (data.recipes_count || 0).toLocaleString();
+            document.getElementById('count-videos').textContent = (data.videos_count || 0).toLocaleString();
+            document.getElementById('count-views').textContent = (data.total_views || 0).toLocaleString();
+            document.getElementById('count-earnings').textContent = '$' + (data.total_earnings || 0).toFixed(2);
+            
+            // Load Content
+            allContent = data.content || [];
+            filterContent('all');
+        })
+        .catch(err => {
+            console.error('Error loading dashboard:', err);
+            document.getElementById('content-table-body').innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Failed to load data.</td></tr>';
+        });
+
+      // 3. Filter Logic
+      window.filterContent = function(type) {
+          const tbody = document.getElementById('content-table-body');
+          let filtered = allContent;
+          
+          if (type !== 'all') {
+              filtered = allContent.filter(item => item.type === type);
+          }
+
+          if (filtered.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No content found. Start creating!</td></tr>';
+              return;
+          }
+
+          tbody.innerHTML = filtered.map(item => `
+              <tr>
+                <td>
+                    <img src="${item.image || 'assets/default.jpg'}" alt="${item.name}" 
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                </td>
+                <td>
+                    <strong>${item.name}</strong>
+                    ${item.is_static ? '<br><small style="color:#999">Static File</small>' : ''}
+                </td>
+                <td>
+                    <span class="status-badge" style="background:${item.type==='recipe'?'#e8f5e9':'#e3f2fd'}; color:${item.type==='recipe'?'#2e7d32':'#1565c0'}">
+                        ${item.type === 'recipe' ? 'Recipe' : 'Reel'}
+                    </span>
+                </td>
+                <td>${(item.view_count || 0).toLocaleString()}</td>
+                <td>${new Date(item.created_at).toLocaleDateString()}</td>
+                <td>
+                  <a href="add-recipe.html?id=${item.id}&mode=edit" class="action-btn btn-edit">Edit</a>
+                  <button class="action-btn btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+                </td>
+              </tr>
+            `).join('');
+      };
+
+      // 4. Delete Logic
+      window.deleteItem = function(id) {
+        if (!confirm('Are you sure you want to delete this item?')) return;
+        
+        fetch('/recipes/' + id, { method: 'DELETE' })
+          .then(r => r.json())
+          .then(res => {
+            if (res.ok) {
+              // Remove from list
+              allContent = allContent.filter(i => i.id !== id);
+              filterContent(document.getElementById('filter-type').value);
+              
+              // Refresh Stats (Simplified: decrement counts locally)
+              // Or re-fetch stats
+              location.reload(); 
+            } else {
+              alert('Error deleting item: ' + (res.error || 'Unknown error'));
+            }
+          })
+          .catch(err => alert('Network error'));
+      };
+      
+    })();
+  </script>
+</body>
+</html>

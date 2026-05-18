@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CookVala | Easy, healthy, budget-friendly meals</title>
+  <meta name="description"
+    content="CookVala shares easy, healthy, and budget-friendly recipes. Explore dynamic categories and featured dishes updated regularly.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/feed.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+  <div style="position: relative; width: 100%; background-color: #0b0f19; overflow: hidden;">
+    <!-- Background Video with dark overlay (opacity) -->
+    <video autoplay loop muted playsinline poster="assets/sample.mp4"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.35; z-index: 0;">
+      <source src="assets/sample.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    
+    <div class="wrap" style="position: relative; z-index: 1;">
+      <section style="display: flex; flex-direction: column; justify-content: center; padding: 120px 0; min-height: 600px;">
+        <div style="color: white; max-width: 650px;">
+          <h1 style="font-family: 'Inter', sans-serif; font-size: 64px; font-weight: 700; line-height: 1.1; margin: 0 0 24px; color: #ffffff; letter-spacing: -1px;">Share Your<br>Culinary<br>Masterpieces</h1>
+          <p style="font-family: 'Inter', sans-serif; font-size: 20px; color: #e2e8f0; margin: 0 0 40px; line-height: 1.6;">Join our community of food enthusiasts and discover amazing recipes from around the world.</p>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="recipes.html" style="background-color: #00c881; color: white; padding: 14px 32px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 16px; border: 1px solid #00c881;">Discover Recipes</a>
+            <a href="login.html" style="background-color: transparent; color: white; padding: 14px 32px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 16px; border: 1px solid #ffffff; backdrop-filter: blur(4px);">Create Account</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <main class="wrap" style="padding-top: 40px;">
+    <section class="section">
+      <h2>Recipe Categories</h2>
+      <div class="grid">
+        <a class="tile" href="recipes.html?category=breakfast">
+          <img alt="Breakfast" src="assets/brackfast.jpg">
+          <h3>Breakfast</h3>
+          <p>Bright starts with quick, wholesome bites.</p>
+        </a>
+        <a class="tile" href="recipes.html?category=lunch">
+          <img alt="Lunch" src="assets/lunch.jpg">
+          <h3>Lunch</h3>
+          <p>Fresh bowls and handhelds for busy afternoons.</p>
+        </a>
+        <a class="tile" href="recipes.html?category=dinner">
+          <img alt="Dinner" src="assets/dinner.jpg">
+          <h3>Dinner</h3>
+          <p>Comforting classics made weeknight-simple.</p>
+        </a>
+        <a class="tile" href="recipes.html?category=desserts">
+          <img alt="Desserts" src="assets/dessert.jpg">
+          <h3>Desserts</h3>
+          <p>Sweet finishes with minimal effort.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Advertisement Section -->
+    <section class="section" id="ads-section"
+      style="display:none; background-color:#fdfdfd; padding:20px; border:1px solid #eee; border-radius:8px; margin-bottom:20px;">
+      <h2 style="font-size:20px; margin-bottom:15px; color:#555;"><i class="fas fa-ad"
+          style="color:#e67e22; margin-right:10px;"></i> Sponsored</h2>
+      <div id="ads-container"
+        style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:20px;">
+        <!-- Ads loaded dynamically -->
+      </div>
+    </section>
+
+    <section class="section" id="video-home-section">
+      <h2><i class="fab fa-youtube" style="color:#FF0000; margin-right:10px;"></i> Latest Videos</h2>
+      <div id="video-grid" class="video-grid">
+        <!-- Videos loaded dynamically -->
+      </div>
+    </section>
+
+    <section class="section" id="social-feed-section" style="display:none">
+      <h2><i class="fas fa-rss" style="color:#e67e22; margin-right:10px;"></i> Community Feed</h2>
+      <div id="social-feed-container" class="feed-container"></div>
+    </section>
+
+    <section class="section" id="new-arrivals-section" style="display:none">
+      <h2><i class="fas fa-clock" style="color:#e67e22; margin-right:10px;"></i> New Arrivals</h2>
+      <div class="list" id="new-arrivals-list"></div>
+    </section>
+    <section class="section" id="promoted-section" style="display:none">
+      <h2><i class="fas fa-bullhorn" style="color:#e67e22; margin-right:10px;"></i> Promoted Recipes</h2>
+      <div class="list" id="promoted-list"></div>
+    </section>
+
+
+
+    <section class="section" id="featured-recipes-section">
+      <h2>Featured Recipes</h2>
+      <div class="list" id="featured-list">
+        <!-- Rendered dynamically from /recipes/featured; falls back to static if none -->
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="wrap cols">
+      <div>
+        <h3>CookVala</h3>
+        <p>CookVala shares easy, healthy, and budget-friendly recipes for real life. Discover dynamic collections, quick
+          tips, and comforting meals that fit your schedule.</p>
+        <small>© 2025 CookVala. All rights reserved.</small>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a> · <a href="recipes.html">Recipes</a> · <a href="blog.html">Blog</a> · <a
+            href="about.html">About</a> · <a href="contact.html">Contact</a></p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <p>Instagram · Pinterest · YouTube</p>
+      </div>
+      <div class="nl">
+        <h4>Newsletter</h4>
+        <form>
+          <input type="email" placeholder="you@example.com" aria-label="Email">
+          <button type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/auth-nav.js"></script>
+</body>
+<script>
+  (function () {
+    function getOverrides() {
+      try { return JSON.parse(localStorage.getItem('tt_builtin_overrides') || '{}'); } catch (e) { return {}; }
+    }
+    function getDeleted() {
+      try { return JSON.parse(localStorage.getItem('tt_deleted_builtin_recipes') || '[]'); } catch (e) { return []; }
+    }
+    var overrides = getOverrides();
+    var deleted = getDeleted();
+    var cards = document.querySelectorAll('.item.card');
+    cards.forEach(function (card) {
+      var href = card.getAttribute('href') || '';
+      if (href && deleted.indexOf(href) !== -1) {
+        card.remove();
+        return;
+      }
+      var o = overrides[href];
+      if (o) {
+        var img = card.querySelector('img');
+        var h3 = card.querySelector('h3');
+        if (h3 && o.name) h3.textContent = o.name;
+        if (img && o.image) { img.src = o.image; img.alt = o.name || img.alt; }
+      }
+    });
+  })();
+  (function () {
+    // Load Video Grid (YouTube Style)
+    var videoGrid = document.getElementById('video-grid');
+    if (videoGrid) {
+      fetch('/api/reels')
+        .then(r => r.json())
+        .then(data => {
+          if (data.reels && data.reels.length > 0) {
+            videoGrid.innerHTML = data.reels.map(item => {
+              var thumbnail = item.thumbnail_url || item.image || 'assets/default.jpg';
+              var avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.author_name) + '&background=random';
+              var views = item.view_count || 0;
+              var viewStr = views >= 1000 ? (views / 1000).toFixed(1) + 'K' : views;
+              var timeAgo = getTimeAgo(new Date(item.created_at));
+              var link = item.type === 'reel' ? 'reels.html?id=' + item.id : 'recipes/recipe-user.html?id=' + item.id.replace('r-', '');
+
+              return `
+                        <div class="video-card" onclick="window.location.href='${link}'">
+                            <div class="video-thumbnail">
+                                <img src="${thumbnail}" alt="${item.title}">
+                                <div class="video-duration">View</div>
+                            </div>
+                            <div class="video-info">
+                                <img class="video-avatar" src="${avatar}" alt="${item.author_name}">
+                                <div class="video-details">
+                                    <h3 class="video-title">${item.title || 'Untitled Video'}</h3>
+                                    <div class="video-meta">
+                                        <div>${item.author_name}</div>
+                                        <div>• ${viewStr} views • ${timeAgo}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+            }).join('');
+          } else {
+            var ch = localStorage.getItem('tt_youtube_channel_id') || '';
+            if (ch) {
+              fetch('/api/youtube/channel?channel_id=' + encodeURIComponent(ch))
+                .then(r => r.json())
+                .then(d => {
+                  if (d.ok && d.videos && d.videos.length > 0) {
+                    videoGrid.innerHTML = d.videos.slice(0, 12).map(function (v) {
+                      var timeAgo = getTimeAgo(new Date(v.created_at));
+                      var avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent('YouTube') + '&background=random';
+                      var link = v.link || ('https://www.youtube.com/watch?v=' + v.id);
+                      return (
+                        '<div class="video-card" onclick="window.open(\'' + link + '\', \'_blank\')">' +
+                        '<div class="video-thumbnail">' +
+                        '<img src="' + (v.thumbnail_url || 'assets/default.jpg') + '" alt="' + (v.title || 'Video') + '">' +
+                        '<div class="video-duration">Watch</div>' +
+                        '</div>' +
+                        '<div class="video-info">' +
+                        '<img class="video-avatar" src="' + avatar + '" alt="YouTube">' +
+                        '<div class="video-details">' +
+                        '<h3 class="video-title">' + (v.title || 'Untitled') + '</h3>' +
+                        '<div class="video-meta">' +
+                        '<div>YouTube</div>' +
+                        '<div>• ' + timeAgo + '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                      );
+                    }).join('');
+                  } else {
+                    videoGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No videos found.</p>';
+                  }
+                })
+                .catch(function () {
+                  videoGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No videos found.</p>';
+                });
+            } else {
+              videoGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No videos found.</p>';
+            }
+          }
+        })
+        .catch(console.error);
+    }
+
+    function getTimeAgo(date) {
+      var seconds = Math.floor((new Date() - date) / 1000);
+      var interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + " years ago";
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + " months ago";
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + " days ago";
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + " hours ago";
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + " minutes ago";
+      return Math.floor(seconds) + " seconds ago";
+    }
+
+    // Load Feed
+    var u = typeof getUser === 'function' ? getUser() : null;
+    fetch('/feed?user_id=' + (u ? u.id : 0))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok && data.feed && data.feed.length > 0) {
+          var section = document.getElementById('social-feed-section');
+          var container = document.getElementById('social-feed-container');
+          if (section && container) {
+            section.style.display = 'block';
+            data.feed.forEach(function (item) {
+              var card = document.createElement('div');
+              card.className = 'feed-card';
+
+              var media = '';
+              if (item.video) {
+                if (item.video.indexOf('youtube') !== -1 || item.video.indexOf('youtu.be') !== -1) {
+                  var vId = item.video.split('v=')[1];
+                  if (!vId && item.video.indexOf('youtu.be/') !== -1) vId = item.video.split('youtu.be/')[1];
+                  if (vId) {
+                    vId = vId.split('&')[0];
+                    media = '<iframe width="100%" height="300" src="https://www.youtube.com/embed/' + vId + '" frameborder="0" allowfullscreen></iframe>';
+                  } else {
+                    media = '<a href="' + item.video + '" target="_blank">Watch Video</a>';
+                  }
+                } else {
+                  media = '<video controls src="' + item.video + '" poster="' + (item.image || '') + '"></video>';
+                }
+              } else {
+                media = '<img src="' + (item.image || 'assets/download.jpg') + '" alt="' + item.name + '">';
+              }
+
+              var likeClass = item.liked_by_me ? 'liked' : '';
+              var likeIcon = item.liked_by_me ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+              var authorName = item.author_name || 'CookVala';
+              var initial = authorName.charAt(0).toUpperCase();
+              var dateStr = new Date(item.created_at).toLocaleDateString();
+
+              var itemLink = 'reels.html?id=' + item.id.substring(2);
+
+              card.innerHTML =
+                '<div class="feed-header">' +
+                '<div class="feed-avatar">' + initial + '</div>' +
+                '<div class="feed-author">' + authorName + '</div>' +
+                '</div>' +
+                '<div class="feed-media">' +
+                '<a href="' + itemLink + '" style="display:block;width:100%;height:100%">' +
+                media +
+                '</a>' +
+                '</div>' +
+                '<div class="feed-actions">' +
+                '<button class="feed-action-btn ' + likeClass + '" onclick="toggleFeedLike(\'' + item.id + '\', this)">' +
+                '<i class="' + likeIcon + '"></i>' +
+                '</button>' +
+                '<a href="' + itemLink + '" class="feed-action-btn">' +
+                '<i class="fa-regular fa-comment"></i>' +
+                '</a>' +
+                '<button class="feed-action-btn">' +
+                '<i class="fa-regular fa-paper-plane"></i>' +
+                '</button>' +
+                '</div>' +
+                '<div class="feed-content">' +
+                '<div class="feed-likes">' + item.likes + ' likes</div>' +
+                '<div class="feed-caption">' +
+                '<span class="feed-author">' + authorName + '</span> ' + item.name +
+                '</div>' +
+                '<div class="feed-date">' + dateStr + '</div>' +
+                '</div>';
+              container.appendChild(card);
+            });
+          }
+        }
+      });
+  })();
+
+  function toggleFeedLike(id, btn) {
+    var u = typeof getUser === 'function' ? getUser() : null;
+    if (!u) { window.location.href = 'login.html'; return; }
+
+    var endpoint = '/videos/' + id.substring(2) + '/like';
+
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: u.id })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          var icon = btn.querySelector('i');
+          if (d.liked) {
+            btn.classList.add('liked');
+            icon.className = 'fa-solid fa-heart';
+            var countEl = btn.closest('.feed-card').querySelector('.feed-likes');
+            var count = parseInt(countEl.textContent);
+            countEl.textContent = (count + 1) + ' likes';
+          } else {
+            btn.classList.remove('liked');
+            icon.className = 'fa-regular fa-heart';
+            var countEl = btn.closest('.feed-card').querySelector('.feed-likes');
+            var count = parseInt(countEl.textContent);
+            countEl.textContent = (Math.max(0, count - 1)) + ' likes';
+          }
+        }
+      });
+  }
+
+  (function () {
+    // Fetch New Arrivals
+    fetch('/recipes/new-arrivals').then(function (r) { return r.json(); }).then(function (d) {
+      if (d.ok && d.recipes && d.recipes.length > 0) {
+        var sec = document.getElementById('new-arrivals-section');
+        var list = document.getElementById('new-arrivals-list');
+        if (sec && list) {
+          sec.style.display = 'block';
+          d.recipes.forEach(function (r) {
+            var div = document.createElement('div');
+            div.className = 'item card';
+            var img = r.image || 'assets/download.jpg';
+            var href = r.is_static ? r.id.replace('static-', '') : ('recipes/recipe-user.html?id=' + r.id);
+            div.innerHTML = '<a href="' + href + '" class="img-link"><img src="' + img + '" alt="' + r.name + '"></a>' +
+              '<div class="meta"><p>' + (r.category || 'Uncategorized') + '</p><h3><a href="' + href + '">' + r.name + '</a></h3></div>';
+            list.appendChild(div);
+          });
+        }
+      }
+    });
+
+    // Fetch Ads
+    fetch('/ads').then(function (r) { return r.json(); }).then(function (d) {
+      if (d.ok && d.ads && d.ads.length > 0) {
+        var sec = document.getElementById('ads-section');
+        var container = document.getElementById('ads-container');
+        if (sec && container) {
+          sec.style.display = 'block';
+          d.ads.forEach(function (ad) {
+            var div = document.createElement('div');
+            div.className = 'item card';
+            div.style.border = '1px solid #e67e22'; // Highlight as ad
+
+            var img = ad.image_url || 'assets/download.jpg';
+            var link = ad.link_url || '#';
+
+            div.innerHTML = '<a href="' + link + '" target="_blank" class="img-link"><img src="' + img + '" alt="' + ad.title + '" style="height:150px;"></a>' +
+              '<div class="meta" style="padding:10px;">' +
+              '<span style="background:#e67e22; color:white; padding:2px 6px; border-radius:4px; font-size:10px; text-transform:uppercase;">Ad</span>' +
+              '<h3 style="margin:5px 0;"><a href="' + link + '" target="_blank">' + ad.title + '</a></h3>' +
+              '<p style="font-size:13px; color:#666;">' + (ad.content || '') + '</p>' +
+              '</div>';
+            container.appendChild(div);
+          });
+        }
+      }
+    });
+
+    // Fetch Promoted
+    fetch('/recipes/promoted').then(function (r) { return r.json(); }).then(function (d) {
+      if (d.ok && d.recipes && d.recipes.length > 0) {
+        var sec = document.getElementById('promoted-section');
+        var list = document.getElementById('promoted-list');
+        if (sec && list) {
+          sec.style.display = 'block';
+          d.recipes.forEach(function (r) {
+            var div = document.createElement('div');
+            div.className = 'item card';
+            var img = r.image || 'assets/download.jpg';
+            var href = r.is_static ? r.id.replace('static-', '') : ('recipes/recipe-user.html?id=' + r.id);
+            div.innerHTML = '<a href="' + href + '" class="img-link"><img src="' + img + '" alt="' + r.name + '"></a>' +
+              '<div class="meta"><p>' + (r.category || 'Uncategorized') + '</p><h3><a href="' + href + '">' + r.name + '</a></h3></div>';
+            list.appendChild(div);
+          });
+        }
+      }
+    });
+
+    // Featured
+    var list = document.getElementById('featured-list');
+    if (!list) return;
+    fetch('/recipes/featured').then(function (r) { return r.json(); }).then(function (data) {
+      if (!data || !data.ok) return;
+      var arr = data.recipes || [];
+      if (arr.length === 0) {
+        // Fallback to original static three if no featured selected
+        var fallback = [
+          { href: 'recipe-creamy-garlic-chicken-pasta.html', name: 'Creamy Garlic Chicken Pasta', image: 'assets/Creamy Garlic Chicken Pasta.jpg', category: 'Dinner' },
+          { href: 'recipe-sheet-pan-chicken-fajitas.html', name: 'Sheet-Pan Chicken Fajitas', image: 'assets/Sheet-Pan Chicken Fajitas.jpg', category: 'Dinner' },
+          { href: 'recipe-veggie-fried-rice.html', name: 'Veggie Fried Rice', image: 'assets/Veggie Fried Rice.jpg', category: 'Dinner' }
+        ];
+        fallback.forEach(function (r) {
+          var a = document.createElement('a');
+          a.className = 'item card';
+          a.href = r.href;
+          var img = document.createElement('img'); img.alt = r.name; img.src = r.image;
+
+          var meta = document.createElement('div');
+          meta.className = 'meta';
+          var p = document.createElement('p'); p.textContent = r.category;
+          var h3 = document.createElement('h3'); h3.textContent = r.name;
+          meta.appendChild(p); meta.appendChild(h3);
+
+          a.appendChild(img); a.appendChild(meta);
+          list.appendChild(a);
+        });
+        return;
+      }
+      list.innerHTML = '';
+      arr.forEach(function (r) {
+        var a = document.createElement('a');
+        a.className = 'item card';
+        a.href = '/recipes/recipe-user.html?id=' + encodeURIComponent(r.id);
+        var img = document.createElement('img'); img.alt = r.name; img.src = r.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop';
+
+        var meta = document.createElement('div');
+        meta.className = 'meta';
+        var p = document.createElement('p'); p.textContent = r.category || 'Recipe';
+        var h3 = document.createElement('h3'); h3.textContent = r.name;
+        meta.appendChild(p); meta.appendChild(h3);
+
+        a.appendChild(img); a.appendChild(meta);
+        list.appendChild(a);
+      });
+    }).catch(function () { });
+  })();
+</script>
+
+</html>

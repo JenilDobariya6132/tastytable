@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Dashboard | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    /* Admin-specific Styles matching original theme */
+    .dashboard-stats { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .stat-card { 
+        background: #fff; 
+        padding: 1.5rem; 
+        border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        flex: 1; 
+        min-width: 200px; 
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .stat-info div:first-child { font-size: 2.5rem; font-weight: bold; color: #3E7F62; }
+    .stat-info div:last-child { color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .stat-icon {
+        width: 50px; height: 50px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        background: #eee;
+    }
+    .icon-green { background: #e8f5e9; color: #2e7d32; }
+    .icon-blue { background: #e3f2fd; color: #1565c0; }
+    .icon-orange { background: #fff3e0; color: #ef6c00; }
+    .icon-purple { background: #f3e5f5; color: #7b1fa2; }
+
+    .admin-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    
+    .recipe-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .recipe-table th, .recipe-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+    .recipe-table th { background: #f8f9fa; font-weight: bold; color: #444; }
+    .recipe-table tr:last-child td { border-bottom: none; }
+    .recipe-table tr:hover { background-color: #fcfcfc; }
+    
+    .action-btn { padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; margin-right: 0.5rem; display: inline-block; cursor: pointer; border: none; }
+    .btn-edit { background: #e3f2fd; color: #1565c0; }
+    .btn-delete { background: #ffebee; color: #c62828; }
+    .btn-add { background: #3E7F62; color: #fff; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 4px; font-weight: bold; }
+    
+    .status-badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+    .status-db { background: #e8f5e9; color: #2e7d32; }
+    .status-local { background: #fff3e0; color: #ef6c00; }
+
+    /* Modal Styles */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-content { background: #fff; width: 90%; max-width: 800px; max-height: 80vh; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+    .modal-header { padding: 1rem 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin: 0; color: #333; }
+    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+    .modal-body { padding: 0; overflow-y: auto; }
+    .user-table { width: 100%; border-collapse: collapse; }
+    .user-table th, .user-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid #eee; }
+    .user-table th { background: #f8f9fa; position: sticky; top: 0; }
+    .stat-card.clickable { cursor: pointer; transition: transform 0.2s; }
+    .stat-card.clickable:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="modal-overlay" id="users-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>All Users</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Recipes</th>
+              <th>Reels</th>
+              <th>Views</th>
+              <th>Earnings</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr><td colspan="8" style="text-align:center;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="ads-modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3>Manage Advertisements</h3>
+        <button class="modal-close" onclick="closeAdsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="padding: 1rem 1.5rem 0; display:flex; gap:10px; align-items:center;">
+            <label style="font-weight:600;">Filter:</label>
+            <select id="ads-filter" onchange="fetchAds(this.value)" style="padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
+                <option value="all">All Ads</option>
+                <option value="pending" selected>Pending</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+        <div id="pending-ads-list" style="padding: 1.5rem;">
+          <!-- Ads items -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala <span style="font-size: 0.6em; background: #333; color: #fff; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px;">ADMIN</span></div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="wrap">
+    <section class="section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h2>Dashboard Overview</h2>
+        <span style="color:#666">Welcome back, Admin 👋</span>
+      </div>
+
+      <div class="dashboard-stats">
+        <div class="stat-card clickable" onclick="openUserModal()">
+          <div class="stat-info">
+            <div id="count-users">-</div>
+            <div>Total Users</div>
+          </div>
+          <div class="stat-icon icon-orange"><span class="material-icons-outlined">group</span></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-recipes">-</div>
+            <div>Total Recipes</div>
+          </div>
+          <div class="stat-icon icon-green"><span class="material-icons-outlined">restaurant</span></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-videos">-</div>
+            <div>Total Videos</div>
+          </div>
+          <div class="stat-icon icon-blue"><span class="material-icons-outlined">play_circle</span></div>
+        </div>
+
+         <div class="stat-card">
+          <div class="stat-info">
+            <div id="count-views">-</div>
+            <div>Total Views</div>
+          </div>
+          <div class="stat-icon icon-purple"><span class="material-icons-outlined">visibility</span></div>
+        </div>
+      </div>
+      
+      <div class="admin-controls">
+        <h2>Manage Content</h2>
+        <div style="display:flex; gap:10px;">
+            <select id="filter-type" onchange="filterRecipes(this.value)" style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="all">All Items</option>
+                <option value="recipe">Recipes Only</option>
+                <option value="reel">Reels Only</option>
+            </select>
+            <button onclick="openAdsModal()" class="btn-add" style="background:#e67e22; border:none; cursor:pointer;">Manage Ads</button>
+            <a href="add-recipe.html" class="btn-add">+ Add Recipe</a>
+            <a href="add-recipe.html?type=reel" class="btn-add" style="background:#333;">+ Add Reel</a>
+        </div>
+      </div>
+      
+      <div style="overflow-x: auto;">
+        <table class="recipe-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Featured</th>
+              <th>Author</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recipe-table-body">
+            <tr><td colspan="7" style="text-align:center;">Loading content...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="margin-top: 3rem;">
+        <h3>Built-in Recipes (Static)</h3>
+        <p>These recipes are hardcoded in HTML files and cannot be deleted via this dashboard.</p>
+      </div>
+      
+    </section>
+  </main>
+  
+  <footer class="footer">
+    <div class="wrap" style="text-align: center;">
+      <small>© 2025 CookVala Admin Panel</small>
+    </div>
+  </footer>
+  
+  <script src="assets/auth-nav.js"></script>
+  <script>
+    (function() {
+      // 1. Enforce Admin Access
+      try {
+        const user = JSON.parse(localStorage.getItem('tt_user'));
+        if (!user || user.role !== 'admin') {
+          window.location.href = 'login.html?role=admin'; // Redirect to login
+          return;
+        }
+      } catch(e) {
+        window.location.href = 'login.html?role=admin';
+        return;
+      }
+
+      // 2. Fetch Stats
+      fetch('/admin/stats')
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok) {
+            document.getElementById('count-users').textContent = data.users_count.toLocaleString();
+            document.getElementById('count-recipes').textContent = data.db_recipes_count.toLocaleString();
+            document.getElementById('count-videos').textContent = (data.reels_count || 0).toLocaleString();
+            document.getElementById('count-views').textContent = (data.total_views || 0).toLocaleString();
+          }
+        })
+        .catch(err => console.error('Stats error:', err));
+
+      // 3. Fetch Recipes
+      let allRecipes = [];
+
+      window.filterRecipes = function(type) {
+          const tbody = document.getElementById('recipe-table-body');
+          let filtered = allRecipes;
+          
+          if (type === 'reel') {
+              filtered = allRecipes.filter(r => r.category === 'Reels' || (r.video && !r.category));
+          } else if (type === 'recipe') {
+              filtered = allRecipes.filter(r => r.category !== 'Reels');
+          }
+
+          if (filtered.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No items found.</td></tr>';
+              return;
+          }
+
+          tbody.innerHTML = filtered.map(r => `
+              <tr>
+                <td><img src="${r.image || 'assets/default.jpg'}" alt="${r.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                <td><strong>${r.name}</strong> ${r.is_static ? '<span class="status-badge status-local">Static</span>' : '<span class="status-badge status-db">DB</span>'}</td>
+                <td>${r.category || (r.video ? 'Reels' : 'Uncategorized')}</td>
+                <td>
+                  <input type="checkbox" ${r.featured ? 'checked' : ''} onchange="setFeatured('${r.id}', this.checked)" ${r.is_static ? 'disabled title="Static recipes cannot be featured"' : ''}>
+                  ${r.is_static ? '<small style="color:#999">n/a</small>' : ''}
+                </td>
+                <td>${r.author || 'Unknown'}</td>
+                <td>${new Date(r.created_at).toLocaleDateString()}</td>
+                <td>
+                  <a href="add-recipe.html?id=${r.id}&mode=edit" class="action-btn btn-edit">Edit</a>
+                  <button class="action-btn btn-delete" data-id="${r.id}" onclick="deleteRecipe('${r.id}')">Delete</button>
+                </td>
+              </tr>
+            `).join('');
+      };
+
+      function loadRecipes() {
+        const tbody = document.getElementById('recipe-table-body');
+        
+        fetch('/recipes/all')
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok) throw new Error(data.error);
+            allRecipes = data.recipes;
+            filterRecipes(document.getElementById('filter-type').value);
+          })
+          .catch(err => {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: red;">Error loading recipes.</td></tr>';
+          });
+      }
+      
+      loadRecipes();
+
+      // Modal Logic
+      window.openUserModal = function() {
+        document.getElementById('users-modal').classList.add('open');
+        fetchUsers();
+      };
+
+      window.closeModal = function() {
+        document.getElementById('users-modal').classList.remove('open');
+      };
+
+      function fetchUsers() {
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading users...</td></tr>';
+        
+        fetch('/admin/users')
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok) throw new Error(data.error);
+            if (data.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No users found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>
+                        <div style="font-weight:bold">${u.name}</div>
+                        <div style="font-size:0.8em;color:#666">${u.email}</div>
+                    </td>
+                    <td><span class="status-badge ${u.role === 'admin' ? 'status-db' : ''}" style="${u.role === 'admin' ? 'background:#e3f2fd;color:#1565c0' : 'background:#eee;color:#666'}">${u.role}</span></td>
+                    <td>${u.recipes_count || 0}</td>
+                    <td>${u.videos_count || 0}</td>
+                    <td>${(u.total_views || 0).toLocaleString()}</td>
+                    <td style="font-weight:bold; color:#3E7F62;">$${(Number(u.total_earnings) || 0).toFixed(2)}</td>
+                    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+          })
+          .catch(e => {
+            console.error(e);
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:red">Failed to load users</td></tr>';
+          });
+      }
+
+      window.updateUserRole = function(userId, newRole) {
+          if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
+          
+          try {
+              const user = JSON.parse(localStorage.getItem('tt_user'));
+              
+              fetch('/admin/users/' + userId + '/role', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ role: newRole, current_user_id: user.id })
+              })
+              .then(r => r.json())
+              .then(data => {
+                  if (data.ok) {
+                      alert('User role updated.');
+                      fetchUsers(); // Refresh list
+                  } else {
+                      alert('Error: ' + data.error);
+                  }
+              })
+              .catch(e => alert('Network error'));
+          } catch (e) {
+              alert('Authentication error');
+          }
+      };
+
+      // Close modal on outside click
+      document.getElementById('users-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+      });
+
+      // Global delete function
+      window.deleteRecipe = function(id) {
+        if (!confirm('Are you sure you want to delete this item?')) return;
+        
+        fetch('/recipes/' + id, { method: 'DELETE' })
+          .then(r => r.json())
+          .then(res => {
+            if (res.ok) {
+              alert('Item deleted.');
+              loadRecipes();
+              // Update stats too
+              fetch('/admin/stats').then(r=>r.json()).then(d => {
+                if(d.ok) {
+                    document.getElementById('count-recipes').textContent = d.db_recipes_count.toLocaleString();
+                    document.getElementById('count-videos').textContent = (d.reels_count || 0).toLocaleString();
+                }
+              });
+            } else {
+              alert('Error deleting item: ' + (res.error || 'Unknown error'));
+            }
+          })
+          .catch(err => alert('Network error'));
+      };
+      
+      window.setFeatured = function(id, on) {
+        fetch('/admin/recipes/' + id + '/featured', {
+          method: 'PUT',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ featured: !!on })
+        }).then(r => r.json()).then(res => {
+          if (!res.ok) alert('Failed to update featured: ' + (res.error || 'Unknown'));
+        }).catch(_ => alert('Network error'));
+      };
+
+      // --- Ads Management ---
+      
+      window.openAdsModal = function() {
+        document.getElementById('ads-modal').classList.add('open');
+        // Default to pending if first time, or whatever last selected? Let's default to pending for attention.
+        document.getElementById('ads-filter').value = 'pending';
+        fetchAds('pending');
+      };
+
+      window.closeAdsModal = function() {
+        document.getElementById('ads-modal').classList.remove('open');
+      };
+
+      // Close ads modal on outside click
+      document.getElementById('ads-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeAdsModal();
+      });
+
+      window.fetchAds = function(statusFilter) {
+        const list = document.getElementById('pending-ads-list');
+        list.innerHTML = '<div style="text-align:center; padding:1rem;">Loading ads...</div>';
+        
+        try {
+            const user = JSON.parse(localStorage.getItem('tt_user'));
+            
+            // If statusFilter is provided, use it. If 'all', use 'all'.
+            // The endpoint expects ?status=... or nothing for all if we use /admin/ads/all
+            // But wait, we created /admin/ads/all?status=...
+            // So if statusFilter is 'all', we send 'all' or just omit? My endpoint logic: if (statusFilter && statusFilter !== 'all')
+            
+            let url = '/admin/ads/all?user_id=' + user.id;
+            if (statusFilter && statusFilter !== 'all') {
+                url += '&status=' + statusFilter;
+            }
+
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.ok) throw new Error(data.error);
+                    
+                    if (data.ads.length === 0) {
+                        list.innerHTML = '<div style="text-align:center; padding:1rem; color:#666;">No advertisements found.</div>';
+                        return;
+                    }
+                    
+                    list.innerHTML = data.ads.map(ad => {
+                        const isActive = ad.status === 'active';
+                        const isPending = ad.status === 'pending';
+                        const isRejected = ad.status === 'rejected';
+                        
+                        let statusColor = '#95a5a6';
+                        if (isActive) statusColor = '#27ae60';
+                        if (isPending) statusColor = '#f39c12';
+                        if (isRejected) statusColor = '#c0392b';
+
+                        // Determine buttons
+                        let buttons = '';
+                        if (isPending) {
+                            buttons = `
+                                <button onclick="updateAdStatus(${ad.id}, 'active')" style="padding:5px 10px; background:#27ae60; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85em;">Approve</button>
+                                <button onclick="updateAdStatus(${ad.id}, 'rejected')" style="padding:5px 10px; background:#c0392b; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85em;">Reject</button>
+                            `;
+                        } else if (isActive) {
+                             buttons = `
+                                <button onclick="updateAdStatus(${ad.id}, 'paused')" style="padding:5px 10px; background:#f39c12; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85em;">Pause</button>
+                                <button onclick="updateAdStatus(${ad.id}, 'rejected')" style="padding:5px 10px; background:#c0392b; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85em;">Reject</button>
+                             `;
+                        } else {
+                             // Paused or Rejected -> Allow Activate
+                             buttons = `
+                                <button onclick="updateAdStatus(${ad.id}, 'active')" style="padding:5px 10px; background:#27ae60; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85em;">Activate</button>
+                             `;
+                        }
+
+                        return `
+                        <div style="display:flex; gap:15px; background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid #eee;">
+                            <div style="flex-shrink:0;">
+                                <img src="${ad.image_url || 'assets/download.jpg'}" style="width:100px; height:70px; object-fit:cover; border-radius:4px;">
+                            </div>
+                            <div style="flex-grow:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:start;">
+                                    <div>
+                                        <h4 style="margin:0 0 5px 0;">${ad.title}</h4>
+                                        <span style="font-size:0.8em; color:#666;">by ${ad.user_name || 'Unknown'} &bull; ${new Date(ad.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <span style="background:${statusColor}; color:white; padding:2px 8px; border-radius:12px; font-size:0.75em; text-transform:capitalize;">${ad.status}</span>
+                                </div>
+                                <p style="margin:5px 0 10px 0; font-size:0.9em; color:#555;">${ad.content || ''}</p>
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <a href="${ad.link_url}" target="_blank" style="font-size:0.85em; color:#1565c0;">View Link <i class="fas fa-external-link-alt"></i></a>
+                                    <div style="display:flex; gap:8px;">
+                                        ${buttons}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    }).join('');
+                })
+                .catch(e => {
+                    console.error(e);
+                    list.innerHTML = '<div style="text-align:center; color:red; padding:1rem;">Failed to load ads.</div>';
+                });
+        } catch (e) {
+            console.error(e);
+            list.innerHTML = '<div style="text-align:center; color:red; padding:1rem;">Authentication error.</div>';
+        }
+      }
+
+      window.updateAdStatus = function(adId, status) {
+          if (!confirm(`Are you sure you want to ${status} this ad?`)) return;
+          
+          try {
+              const user = JSON.parse(localStorage.getItem('tt_user'));
+              
+              fetch('/admin/ads/' + adId + '/status', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ user_id: user.id, status: status })
+              })
+              .then(r => r.json())
+              .then(data => {
+                  if (data.ok) {
+                      // Refresh list with current filter
+                      const currentFilter = document.getElementById('ads-filter').value;
+                      fetchAds(currentFilter); 
+                  } else {
+                      alert('Error: ' + data.error);
+                  }
+              })
+              .catch(e => alert('Network error'));
+          } catch (e) {
+              alert('Authentication error');
+          }
+      };
+      
+    })();
+  </script>
+</body>
+</html>

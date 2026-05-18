@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Recipes | CookVala</title>
+  <meta name="description" content="Browse easy, healthy, budget-friendly recipes. Filter by Breakfast, Lunch, Dinner, Desserts.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">TastyTable</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+         <h2>All Recipes</h2>
+         <div style="display:flex; gap:10px; align-items:center;">
+             <select id="sort-select" style="padding:8px; border-radius:4px; border:1px solid #ddd; background:#fff;">
+                 <option value="latest">Latest Recipes</option>
+                 <option value="viewed">Most Viewed Recipes</option>
+             </select>
+         </div>
+      </div>
+      <div class="list" id="recipe-list">
+        <!-- Recipes will be loaded dynamically -->
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="wrap cols">
+      <div>
+        <h3>CookVala</h3>
+        <p>CookVala shares easy, healthy, and budget-friendly recipes for real life.</p>
+        <small>© 2025 CookVala. All rights reserved.</small>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a> · <a href="recipes.html">Recipes</a> · <a href="blog.html">Blog</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a></p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <p>Instagram · YouTube</p>
+      </div>
+      <div class="nl">
+        <h4>Newsletter</h4>
+        <form>
+          <input type="email" placeholder="you@example.com" aria-label="Email">
+          <button type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/auth-nav.js"></script>
+</body>
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var selected = (params.get('category') || '').toLowerCase();
+    var search = (params.get('search') || '').toLowerCase();
+    
+    function applyFilter() {
+      if (!selected && !search) return;
+      var lists = document.querySelectorAll('.list');
+      lists.forEach(function (list) {
+        var cards = list.querySelectorAll('.item.card');
+        cards.forEach(function (card) {
+          var p = card.querySelector('p');
+          var h3 = card.querySelector('h3');
+          var cat = '';
+          var title = '';
+          if (p && p.textContent) {
+            var text = p.textContent.trim().toLowerCase();
+            cat = text.split('•')[0].trim();
+            if (cat === 'dessert') cat = 'desserts';
+          }
+          if (h3 && h3.textContent) title = h3.textContent.trim().toLowerCase();
+          var matchCategory = !selected || selected === 'all' || cat === selected;
+          var matchSearch = !search || title.indexOf(search) !== -1;
+          if (matchCategory && matchSearch) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    applyFilter();
+
+    // Fetch recipes and stats
+    Promise.all([
+      fetch('/recipes/all').then(r => r.json()),
+      fetch('/recipes/stats').then(r => r.json())
+    ]).then(function ([data, statsData]) {
+      if (!data || !data.ok) return;
+      
+      var stats = (statsData && statsData.ok) ? statsData.stats : {};
+      var ratings = (statsData && statsData.ok && ratings) ? statsData.ratings : {};
+      // Fix ratings variable access if undefined in statsData
+      ratings = (statsData && statsData.ok && statsData.ratings) ? statsData.ratings : {};
+
+      var recipes = data.recipes || [];
+      
+      // Attach stats to recipes
+      recipes.forEach(function(r) {
+         r.views = (r.view_count !== undefined && r.view_count !== null) ? Number(r.view_count) : Number(stats[r.id] || 0);
+         var rt = ratings[r.id] || { count: 0, avg: 0 };
+         r.ratingCount = rt.count;
+         r.ratingAvg = rt.avg;
+         // Ensure created_at is date object for sorting
+         r.created_at_date = new Date(r.created_at || 0);
+      });
+
+      var listEl = document.getElementById('recipe-list');
+      var sortSelect = document.getElementById('sort-select');
+
+      function render(list) {
+        listEl.innerHTML = '';
+        list.forEach(function (r) {
+          var a = document.createElement('a');
+          a.className = 'item card';
+          // Store data for filtering
+          a.dataset.category = (r.category || '').toLowerCase();
+          a.dataset.name = (r.name || '').toLowerCase();
+          
+          if (r.is_static) {
+             a.href = r.file_path;
+          } else {
+             a.href = '/recipes/recipe-user.html?id=' + encodeURIComponent(r.id);
+          }
+          var img = document.createElement('img');
+          img.alt = r.name;
+          img.src = r.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop';
+          img.loading = 'lazy';
+          
+          var meta = document.createElement('div');
+          meta.className = 'meta';
+          
+          var p = document.createElement('p');
+          p.textContent = (r.category || 'Recipe');
+          
+          var h3 = document.createElement('h3');
+          h3.textContent = r.name;
+          
+          var views = document.createElement('small');
+          views.style.color = '#777';
+          views.textContent = r.views + ' views';
+          
+          var ratingDiv = document.createElement('div');
+          ratingDiv.style.fontSize = '12px';
+          ratingDiv.style.marginBottom = '5px';
+          if (r.ratingCount > 0) {
+             ratingDiv.innerHTML = '<i class="fas fa-star" style="color:#f1c40f"></i> ' + r.ratingAvg.toFixed(1) + ' <span style="color:#999">(' + r.ratingCount + ')</span>';
+          } else {
+             ratingDiv.innerHTML = '<span style="color:#ccc; font-size:11px">No ratings</span>';
+          }
+          
+          a.appendChild(img);
+          meta.appendChild(p);
+          meta.appendChild(h3);
+          meta.appendChild(ratingDiv);
+          meta.appendChild(views);
+          a.appendChild(meta);
+          
+          listEl.appendChild(a);
+        });
+        applyFilter();
+      }
+
+      // Initial Sort (Latest)
+      recipes.sort(function(a, b) { return b.created_at_date - a.created_at_date; });
+      render(recipes);
+
+      // Handle Sort Change
+      sortSelect.onchange = function() {
+          var val = this.value;
+          if (val === 'latest') {
+              recipes.sort(function(a, b) { return b.created_at_date - a.created_at_date; });
+          } else if (val === 'viewed') {
+              recipes.sort(function(a, b) { return b.views - a.views; });
+          }
+          render(recipes);
+      };
+
+    }).catch(function (e) { console.error(e); });
+    
+  })();
+</script>
+</html>

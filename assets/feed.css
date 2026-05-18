@@ -1,0 +1,90 @@
+
+/* Feed Styles */
+.feed-container {
+    max-width: 600px;
+    margin: 20px auto;
+}
+.feed-card {
+    background: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.feed-header {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #efefef;
+}
+.feed-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #eee;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #888;
+    overflow: hidden;
+}
+.feed-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.feed-author {
+    font-weight: 600;
+    color: #262626;
+    text-decoration: none;
+}
+.feed-media {
+    width: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+.feed-media img, .feed-media video {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+}
+.feed-actions {
+    padding: 12px;
+    display: flex;
+    gap: 16px;
+}
+.feed-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #262626;
+    padding: 0;
+}
+.feed-action-btn:hover {
+    color: #8e8e8e;
+}
+.feed-action-btn.liked {
+    color: #ed4956;
+}
+.feed-content {
+    padding: 0 12px 12px;
+}
+.feed-likes {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.feed-caption {
+    margin-bottom: 8px;
+}
+.feed-date {
+    font-size: 10px;
+    color: #8e8e8e;
+    text-transform: uppercase;
+}

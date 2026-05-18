@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Your Recipes | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Your Recipes</h1>
+    <p>Manage the recipes you have shared with the community.</p>
+    
+    <div class="list" id="recipe-list">
+      <!-- Loaded dynamically -->
+    </div>
+    <p id="empty-msg" style="display:none; text-align:center;">You haven't added any recipes yet. <a href="add-recipe.html">Add one now!</a></p>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 CookVala. All rights reserved.</p>
+  </footer>
+
+  <script src="assets/auth-nav.js"></script>
+  <script>
+    (async function() {
+      const userStr = localStorage.getItem('tt_user');
+      if (!userStr) {
+        window.location.href = 'login.html';
+        return;
+      }
+      const user = JSON.parse(userStr);
+
+      try {
+        const res = await fetch(`/recipes/my?author_id=${user.id}`);
+        const data = await res.json();
+        const list = document.getElementById('recipe-list');
+        const emptyMsg = document.getElementById('empty-msg');
+
+        if (!data.recipes || data.recipes.length === 0) {
+          emptyMsg.style.display = 'block';
+          return;
+        }
+
+        data.recipes.forEach(r => {
+          const a = document.createElement('a');
+          a.className = 'item card';
+          a.href = '/recipes/recipe-user.html?id=' + encodeURIComponent(r.id);
+          
+          let img = document.createElement('img');
+          img.alt = r.name;
+          // Fix image path if needed
+          img.src = r.image.startsWith('http') || r.image.startsWith('/') ? r.image : 'assets/' + r.image;
+          
+          let h3 = document.createElement('h3');
+          h3.textContent = r.name;
+          
+          let p = document.createElement('p');
+          p.textContent = r.intro || r.category;
+          
+          let views = document.createElement('small');
+          views.style.color = '#777';
+          views.style.display = 'block';
+          views.style.marginTop = '5px';
+          
+          let viewsHtml = '<i class="fas fa-eye"></i> ' + (r.view_count || 0) + ' views';
+          if (r.views_today > 0) {
+             viewsHtml += ' <span style="color:#27ae60; margin-left:5px;">(+' + r.views_today + ' today)</span>';
+          }
+          views.innerHTML = viewsHtml;
+
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.appendChild(p);
+          meta.appendChild(h3);
+          meta.appendChild(views);
+
+          a.appendChild(img);
+          a.appendChild(meta);
+          list.appendChild(a);
+        });
+      } catch (e) {
+        console.error('Failed to load recipes', e);
+      }
+    })();
+  </script>
+</body>
+</html>

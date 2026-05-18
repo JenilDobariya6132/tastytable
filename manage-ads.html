@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Manage Advertisements | CookVala</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+      .form-group { margin-bottom: 20px; }
+      .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+      .form-group input, .form-group textarea {
+          width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;
+      }
+      .btn-submit {
+          background: #e67e22; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;
+      }
+      .btn-submit:hover { background: #d35400; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="reels.html">Reels</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Manage Advertisements</h1>
+    <p>Create and manage your advertisements on CookVala.</p>
+    
+    <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 30px;">
+        <h2>Create New Advertisement</h2>
+        <form id="ad-form">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" required placeholder="e.g. Best Cookware Set">
+            </div>
+            <div class="form-group">
+                <label>Description / Content</label>
+                <textarea name="content" rows="3" placeholder="Short description of your ad..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Link URL</label>
+                <input type="url" name="link_url" required placeholder="https://example.com/product">
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <input type="file" name="image_file" accept="image/*">
+            </div>
+            <button type="submit" class="btn-submit">Create Ad</button>
+        </form>
+    </div>
+
+    <h2>Your Active Ads</h2>
+    <div id="ads-list" class="list" style="grid-template-columns: 1fr;">
+        <!-- Loaded dynamically -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 CookVala. All rights reserved.</p>
+  </footer>
+
+  <script src="assets/auth-nav.js"></script>
+  <script src="assets/payment.js"></script>
+  <script>
+    (async function() {
+        const userStr = localStorage.getItem('tt_user');
+        if (!userStr) {
+            window.location.href = 'login.html';
+            return;
+        }
+        const user = JSON.parse(userStr);
+
+        // Load existing ads
+        async function loadAds() {
+            try {
+                const res = await fetch('/ads/my?user_id=' + user.id);
+                
+                if (!res.ok) {
+                    throw new Error(`Server returned status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                const container = document.getElementById('ads-list');
+                container.innerHTML = '';
+                
+                if (data.ok && data.ads && data.ads.length > 0) {
+                    data.ads.forEach(ad => {
+                        const div = document.createElement('div');
+                        div.className = 'item card';
+                        div.style.display = 'flex';
+                        div.style.flexDirection = 'row';
+                        div.style.gap = '20px';
+                        div.style.marginBottom = '20px';
+                        div.style.padding = '15px';
+                        
+                        const img = ad.image_url || 'assets/download.jpg';
+                        const isPending = ad.status === 'pending';
+                        const isRejected = ad.status === 'rejected';
+                        const isActive = ad.status === 'active';
+                        
+                        let statusColor = '#95a5a6'; // Default (paused/grey)
+                        if (isActive) statusColor = '#27ae60';
+                        if (isPending) statusColor = '#f39c12';
+                        if (isRejected) statusColor = '#c0392b';
+                        
+                        let actionHtml = '';
+                        if (!isPending && !isRejected) {
+                             const btnText = isActive ? 'Deactivate' : 'Activate';
+                             actionHtml = `<button onclick="toggleAdStatus(${ad.id})" style="padding:5px 10px; cursor:pointer; border:1px solid #ccc; background:#f9f9f9; border-radius:4px;">${btnText}</button>`;
+                        } else if (isPending) {
+                             actionHtml = `<span style="font-size:0.9em; color:#f39c12;"><i class="fas fa-clock"></i> Pending Approval</span>`;
+                        } else if (isRejected) {
+                             actionHtml = `<span style="font-size:0.9em; color:#c0392b;"><i class="fas fa-times-circle"></i> Rejected</span>`;
+                        }
+
+                        div.innerHTML = `
+                            <div style="flex-shrink:0;">
+                                <img src="${img}" alt="${ad.title}" style="width:120px; height:80px; object-fit:cover; border-radius:4px;">
+                            </div>
+                            <div style="flex-grow:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:start;">
+                                    <h3 style="margin:0 0 5px 0;">${ad.title}</h3>
+                                    <span style="background:${statusColor}; color:white; padding:2px 6px; border-radius:4px; font-size:0.8em; text-transform: capitalize;">${ad.status}</span>
+                                </div>
+                                <p style="margin:0 0 10px 0; color:#666; font-size:0.9em;">${ad.content || ''}</p>
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8em;">
+                                    <a href="${ad.link_url}" target="_blank" style="color:#e67e22;">View Link <i class="fas fa-external-link-alt"></i></a>
+                                    ${actionHtml}
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = '<p>No advertisements found.</p>';
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('ads-list').innerHTML = `<p style="color:red">Failed to load advertisements: ${e.message}</p>`;
+            }
+        }
+
+        window.toggleAdStatus = async function(id) {
+            if(!confirm('Are you sure you want to change the status of this ad?')) return;
+            try {
+                const res = await fetch('/ads/' + id + '/toggle', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: user.id })
+                });
+                const data = await res.json();
+                if(data.ok) {
+                    loadAds(); // Reload list
+                } else {
+                    alert('Failed to update status: ' + data.error);
+                }
+            } catch(e) {
+                console.error(e);
+                alert('Error updating status');
+            }
+        };
+        
+        loadAds();
+
+        document.getElementById('ad-form').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            if (!user.id) {
+                alert('User ID missing. Please login again.');
+                return;
+            }
+
+            // Payment Step
+            try {
+                await TastyPayment.request(15.00, 'Advertisement Posting Fee');
+            } catch (paymentError) {
+                console.log('Payment cancelled');
+                return; // Stop if payment fails or is cancelled
+            }
+
+            const formData = new FormData(this);
+            formData.append('user_id', user.id);
+            
+            try {
+                const res = await fetch('/ads/create', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                let data;
+                try {
+                    data = await res.json();
+                } catch (jsonErr) {
+                    console.error('Failed to parse JSON response:', jsonErr);
+                    throw new Error('Server returned invalid response');
+                }
+
+                if (data.ok) {
+                    alert('Advertisement created successfully! It is now pending admin approval.');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to create advertisement: ' + err.message);
+            }
+        };
+    })();
+  </script>
+</body>
+</html>

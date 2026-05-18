@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Recipe | CookVala</title>
+  <meta name="description" content="User-submitted recipe detail">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/recipe-style-modern.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="recipe-page">
+  <!-- Header (Nav) -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">CookVala</div>
+      <nav class="menu">
+        <a href="../index.html">Home</a>
+        <a href="../recipes.html">Recipes</a>
+        <a href="../reels.html">Reels</a>
+        <a href="../blog.html">Blog</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../add-recipe.html">Add Recipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Image (Full Width) -->
+  <div class="recipe-hero">
+    <img id="r-image" src="" alt="Recipe Image">
+    <div class="play-overlay" id="play-btn" style="display:none">
+      <div class="play-btn"></div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Header Content -->
+    <div class="wrap">
+      <div class="recipe-header" style="max-width: 1100px; margin: 0 auto 40px; padding: 40px 20px; border-bottom: 1px solid #ddd;">
+        <h1 id="r-title"></h1>
+        <p class="recipe-desc" id="r-intro"></p>
+        <div class="recipe-meta-row">
+           <div class="meta-item">
+             <span class="rating-stars" id="rating-stars"></span>
+             <span id="rating-value" style="color:#777; margin-left:5px; font-size:14px;"></span>
+           </div>
+           <span class="meta-separator">|</span>
+           <span class="meta-item" id="meta-prep"></span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item" id="meta-cook"></span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item" id="meta-time"></span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item" id="meta-cals"></span>
+           <span class="meta-separator">|</span>
+           <span class="meta-item" id="meta-views"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="recipe-container">
+      <!-- Left Main Content -->
+      <div class="recipe-main">
+
+         <section class="media-gallery" id="media-gallery">
+           <div class="media-main">
+             <button class="media-nav media-nav-prev" id="media-prev" aria-label="Previous image">
+               <i class="fa-solid fa-chevron-left"></i>
+             </button>
+             <img id="media-main-image" src="" alt="" loading="lazy">
+             <button class="media-nav media-nav-next" id="media-next" aria-label="Next image">
+               <i class="fa-solid fa-chevron-right"></i>
+             </button>
+           </div>
+           <div class="media-thumbs" id="media-thumbs"></div>
+         </section>
+
+         <div id="video-section" class="video-wrapper" style="display:none">
+            <div class="video-label">Watch Video</div>
+            <div id="video-embed"></div>
+         </div>
+         
+         <!-- Actions -->
+         <div class="action-buttons">
+            <button class="btn-action btn-primary" id="act-save"><i class="fas fa-heart"></i> Save Recipe</button>
+            <button class="btn-action btn-outline" id="act-share"><i class="fas fa-share-alt"></i> Share</button>
+            <button class="btn-action btn-outline" id="act-print"><i class="fas fa-print"></i> Print</button>
+            <button class="btn-action btn-outline" id="act-like">Like (<span id="like-count">0</span>)</button>
+         </div>
+
+         <!-- Ingredients -->
+         <div>
+           <div class="section-title">Ingredients</div>
+           <ul class="ingredients-list" id="r-ingredients"></ul>
+         </div>
+
+         <!-- Instructions -->
+         <div>
+           <div class="section-title">Instructions</div>
+           <ol class="instructions-list" id="r-instructions"></ol>
+         </div>
+
+         <!-- Tips -->
+         <div class="tips-box" style="display:none" id="tips-container">
+           <div class="section-title tips-header">Tips & Variations</div>
+           <ul class="tips-list" id="r-tips">
+             <!-- Tips populated by JS if available, or static -->
+           </ul>
+         </div>
+         
+         <!-- Comments -->
+         <div class="reviews-section">
+          <h3 style="font-family:'Playfair Display', serif; margin-bottom:15px;">Comments & Reviews</h3>
+          <div id="comments-list" style="margin-bottom: 1rem;">
+             <p style="color:#777">Loading comments...</p>
+          </div>
+          <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
+          <div style="display:flex; gap:10px;">
+             <input type="text" id="comment-input" placeholder="Leave a comment..." style="flex:1; padding:8px; border:1px solid #ddd; border-radius:4px;">
+             <button id="btn-post-comment" class="btn-action btn-primary" style="flex:0 0 auto; padding:8px 20px;">Post</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Sidebar -->
+      <div class="recipe-sidebar">
+        
+        <!-- Author Box -->
+        <div class="author-box">
+           <div id="meta-author-container">
+               <!-- Populated by JS -->
+               <div style="font-weight:bold; margin-bottom:10px;" id="meta-author"></div>
+           </div>
+           <div id="meta-follow"></div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="sidebar-info-box">
+          <div class="sidebar-header">Recipe Info</div>
+          <div class="sidebar-row"><span class="sidebar-label">Difficulty</span><span class="sidebar-val">Easy</span></div>
+          <div class="sidebar-row"><span class="sidebar-label">Cuisine</span><span class="sidebar-val" id="r-cuisine">General</span></div>
+        </div>
+
+        <!-- Nutrition Box -->
+        <div class="sidebar-info-box" id="nutrition-box">
+          <div class="sidebar-header">Nutrition Facts</div>
+          <div class="sidebar-row"><span>Calories</span><span id="nut-cals">-</span></div>
+          <div class="sidebar-row"><span>Servings</span><span id="nut-serv">-</span></div>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <div id="image-lightbox" class="image-lightbox">
+    <div class="image-lightbox-backdrop"></div>
+    <div class="image-lightbox-content">
+      <img id="lightbox-image" src="" alt="">
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap cols">
+      <div>
+        <h3>TastyTable</h3>
+        <p>TastyTable shares easy, healthy, and budget-friendly recipes for real life.</p>
+        <small>© 2025 TastyTable. All rights reserved.</small>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="../index.html">Home</a> · <a href="../recipes.html">Recipes</a> · <a href="../blog.html">Blog</a> · <a href="../about.html">About</a> · <a href="../contact.html">Contact</a></p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <p>Instagram · Pinterest · YouTube</p>
+      </div>
+      <div class="nl">
+        <h4>Newsletter</h4>
+        <form>
+          <input type="email" placeholder="you@example.com" aria-label="Email">
+          <button type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/auth-nav.js"></script>
+  <script src="../assets/payment.js"></script>
+  
+<script>
+  function getUser() { try { return JSON.parse(localStorage.getItem('tt_user') || 'null'); } catch (e) { return null; } }
+
+  (function () {
+    // Auth Check
+    var u = getUser();
+    if (!u) {
+       window.location.href = '../login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+       return;
+    }
+
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id') || '';
+    
+    // Fetch Recipe
+    fetch('/recipes/' + id)
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.recipe) {
+          render(data.recipe);
+        } else {
+          document.querySelector('main').innerHTML = '<div style="padding:40px;text-align:center"><h1>Recipe not found</h1></div>';
+        }
+      })
+      .catch(e => {
+        console.error(e);
+        document.querySelector('main').innerHTML = '<div style="padding:40px;text-align:center"><h1>Error loading recipe</h1></div>';
+      });
+
+    // Record View
+    if (id) {
+       fetch('/recipes/' + id + '/view', {
+           method: 'POST',
+           headers: {'Content-Type': 'application/json'},
+           body: JSON.stringify({ user_id: u.id })
+       }).catch(e => console.error('View record error', e));
+    }
+
+    function render(rec) {
+      document.title = rec.name + ' | TastyTable';
+      document.getElementById('r-title').textContent = rec.name;
+      document.getElementById('r-intro').textContent = rec.intro || '';
+
+      function resolveImagePath(src) {
+        if (!src) return '';
+        if (src.startsWith('http') || src.startsWith('/')) return src;
+        return '../assets/' + src;
+      }
+
+      var heroImg = document.getElementById('r-image');
+      var baseImage = rec.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200';
+      var mainImageUrl = resolveImagePath(baseImage);
+      heroImg.src = mainImageUrl;
+      heroImg.alt = rec.name || 'Recipe image';
+
+      var galleryImages = [];
+      galleryImages.push(mainImageUrl);
+      var extra = [];
+      if (Array.isArray(rec.gallery)) extra = rec.gallery;
+      else if (Array.isArray(rec.images)) extra = rec.images;
+      extra.forEach(function(item) {
+        var val = typeof item === 'string' ? item : item && item.url;
+        if (val) {
+          var resolved = resolveImagePath(val);
+          if (galleryImages.indexOf(resolved) === -1) galleryImages.push(resolved);
+        }
+      });
+
+      var mediaMain = document.getElementById('media-main-image');
+      var mediaThumbs = document.getElementById('media-thumbs');
+      var mediaPrev = document.getElementById('media-prev');
+      var mediaNext = document.getElementById('media-next');
+      var lightbox = document.getElementById('image-lightbox');
+      var lightboxImage = document.getElementById('lightbox-image');
+      var currentIndex = 0;
+
+      function showImage(index) {
+        if (!galleryImages.length) return;
+        if (index < 0) index = galleryImages.length - 1;
+        if (index >= galleryImages.length) index = 0;
+        currentIndex = index;
+        var src = galleryImages[index];
+        mediaMain.src = src;
+        mediaMain.alt = rec.name ? rec.name + ' image ' + (index + 1) : 'Recipe image';
+        heroImg.src = src;
+        heroImg.alt = mediaMain.alt;
+        var buttons = mediaThumbs.querySelectorAll('.media-thumb');
+        buttons.forEach(function(btn, i) {
+          if (i === index) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+      }
+
+      function openLightbox(index) {
+        if (!galleryImages.length) return;
+        if (index < 0 || index >= galleryImages.length) index = 0;
+        lightboxImage.src = galleryImages[index];
+        lightboxImage.alt = rec.name ? rec.name + ' image ' + (index + 1) : 'Recipe image';
+        lightbox.classList.add('open');
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+      }
+
+      mediaThumbs.innerHTML = '';
+      galleryImages.forEach(function(src, index) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'media-thumb';
+        var tImg = document.createElement('img');
+        tImg.src = src;
+        tImg.loading = 'lazy';
+        tImg.alt = rec.name ? rec.name + ' thumbnail ' + (index + 1) : 'Recipe image thumbnail';
+        btn.appendChild(tImg);
+        btn.onclick = function() {
+          showImage(index);
+        };
+        mediaThumbs.appendChild(btn);
+      });
+
+      if (galleryImages.length <= 1) {
+        mediaPrev.style.display = 'none';
+        mediaNext.style.display = 'none';
+      } else {
+        mediaPrev.style.display = '';
+        mediaNext.style.display = '';
+      }
+
+      mediaPrev.onclick = function() {
+        showImage(currentIndex - 1);
+      };
+      mediaNext.onclick = function() {
+        showImage(currentIndex + 1);
+      };
+
+      mediaMain.onclick = function() {
+        openLightbox(currentIndex);
+      };
+      heroImg.onclick = function() {
+        openLightbox(currentIndex);
+      };
+
+      lightbox.addEventListener('click', function(e) {
+        if (e.target === lightbox || e.target.classList.contains('image-lightbox-backdrop')) {
+          closeLightbox();
+        }
+      });
+
+      showImage(0);
+
+      document.getElementById('r-cuisine').textContent = rec.category || 'General';
+
+      var prep = rec.prep_time || '0 min';
+      var cook = rec.cook_time || '0 min';
+      var prepNum = parseInt(prep) || 0;
+      var cookNum = parseInt(cook) || 0;
+      var total = prepNum + cookNum + ' min';
+
+      document.getElementById('meta-prep').innerHTML = '<i class="far fa-clock meta-icon"></i> Prep: ' + prep;
+      document.getElementById('meta-cook').innerHTML = '<i class="far fa-clock meta-icon"></i> Cook: ' + cook;
+      document.getElementById('meta-time').innerHTML = '<i class="far fa-clock meta-icon"></i> Total: ' + total;
+      document.getElementById('meta-cals').innerHTML = '<i class="fas fa-fire meta-icon" style="color:#E67E22"></i> ' + (rec.calories || 0) + ' Calories';
+
+      document.getElementById('nut-serv').textContent = rec.servings || '-';
+
+      var vidSec = document.getElementById('video-section');
+      var vidEmbed = document.getElementById('video-embed');
+      var playBtn = document.getElementById('play-btn');
+      var videoLoaded = false;
+      
+      // View Recording Logic
+      var viewRecorded = false;
+      function recordView() {
+          if (viewRecorded) return;
+          // Check session storage to prevent duplicate views in same session
+          var key = 'viewed_' + id;
+          if (sessionStorage.getItem(key)) return;
+
+          viewRecorded = true;
+          sessionStorage.setItem(key, '1');
+          
+          fetch('/recipes/' + id + '/view', { 
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: u ? u.id : null })
+          }).catch(console.error);
+      }
+
+      if (rec.video || rec.video_url) {
+        var v = rec.video || rec.video_url;
+        vidSec.style.display = 'none';
+        playBtn.style.display = 'flex';
+        mediaMain.style.cursor = 'pointer';
+
+        function loadVideo() {
+          if (videoLoaded) return;
+          videoLoaded = true;
+          
+          // Record view when video starts (delayed 5s)
+          setTimeout(recordView, 5000);
+
+          vidSec.style.display = 'block';
+          vidEmbed.innerHTML = '';
+          var isYoutube = v.indexOf('youtube.com') !== -1 || v.indexOf('youtu.be') !== -1;
+          var isVimeo = v.indexOf('vimeo.com') !== -1;
+          if (isYoutube || isVimeo) {
+            var iframe = document.createElement('iframe');
+            iframe.width = '100%';
+            iframe.height = '400';
+            iframe.style.border = 'none';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            iframe.allowFullscreen = true;
+            if (isYoutube) {
+              var ytid = '';
+              if (v.indexOf('v=') !== -1) ytid = v.split('v=')[1].split('&')[0];
+              else if (v.indexOf('youtu.be/') !== -1) ytid = v.split('youtu.be/')[1].split('?')[0];
+              else if (v.indexOf('embed/') !== -1) ytid = v.split('embed/')[1].split('?')[0];
+              iframe.src = 'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0';
+            } else if (isVimeo) {
+              var vidId = v.split('/').pop();
+              iframe.src = 'https://player.vimeo.com/video/' + vidId + '?autoplay=1';
+            }
+            vidEmbed.appendChild(iframe);
+          } else {
+            var video = document.createElement('video');
+            video.controls = true;
+            video.playsInline = true;
+            video.autoplay = true;
+            video.style.width = '100%';
+            video.src = v.startsWith('http') || v.startsWith('/') ? v : '../assets/videos/' + v;
+            vidEmbed.appendChild(video);
+          }
+        }
+
+        playBtn.onclick = function() {
+          loadVideo();
+          vidSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        mediaMain.addEventListener('click', function() {
+          if (!videoLoaded) {
+            loadVideo();
+            vidSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      } else {
+        playBtn.style.display = 'none';
+        // If no video, record view after 5 seconds of reading
+        setTimeout(recordView, 5000);
+      }
+
+      var ing = document.getElementById('r-ingredients');
+      ing.innerHTML = '';
+      (rec.ingredients || []).forEach(function (i) {
+        var li = document.createElement('li');
+        li.innerHTML = '<div class="ing-check">✓</div><span>' + i + '</span>';
+        ing.appendChild(li);
+      });
+
+      var inst = document.getElementById('r-instructions');
+      inst.innerHTML = '';
+      (rec.instructions || []).forEach(function (step, idx) {
+        var text = step;
+        var imageUrl = '';
+        if (step && typeof step === 'object') {
+          text = step.text || '';
+          imageUrl = step.image || '';
+        } else if (typeof step === 'string' && step.indexOf('||') !== -1) {
+          var parts = step.split('||');
+          text = parts[0].trim();
+          imageUrl = (parts[1] || '').trim();
+        }
+        var li = document.createElement('li');
+        var num = document.createElement('div');
+        num.className = 'step-num';
+        num.textContent = String(idx + 1);
+        var body = document.createElement('div');
+        body.className = 'step-body';
+        var p = document.createElement('p');
+        p.textContent = text;
+        body.appendChild(p);
+        if (imageUrl) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'step-image-wrapper';
+          var sImg = document.createElement('img');
+          sImg.loading = 'lazy';
+          sImg.src = resolveImagePath(imageUrl);
+          sImg.alt = rec.name ? rec.name + ' step ' + (idx + 1) : 'Recipe step image';
+          wrapper.appendChild(sImg);
+          body.appendChild(wrapper);
+        }
+        li.appendChild(num);
+        li.appendChild(body);
+        inst.appendChild(li);
+      });
+
+      // Initialize Save Button Status
+      fetch('/recipes/' + id + '/is-saved?user_id=' + u.id)
+          .then(r => r.json())
+          .then(d => {
+              if (d.saved) {
+                  document.getElementById('act-save').innerHTML = '<i class="fas fa-heart"></i> Unsave';
+              }
+          })
+          .catch(console.error);
+
+      // Views count (unique viewers)
+      (function loadViews() {
+        var el = document.getElementById('meta-views');
+        fetch('/recipes/' + id + '/views')
+          .then(r => r.json())
+          .then(d => {
+            if (el) {
+               var label = (rec.video || rec.video_url) ? 'Video Views' : 'Views';
+               let html = '<i class="far fa-eye meta-icon"></i> ' + Number(d.views || 0) + ' ' + label;
+               if (d.views_today > 0) {
+                   html += ' <span style="color:#27ae60; font-size:0.8em; margin-left:5px;">(+' + d.views_today + ' today)</span>';
+               }
+               el.innerHTML = html;
+            }
+          })
+          .catch(function(){});
+      })();
+
+      // Author Link
+      var authorEl = document.getElementById('meta-author');
+      if (authorEl) {
+         if (rec.author && rec.author_id) {
+             // Fetch author details to get avatar if possible, for now just name
+             authorEl.innerHTML = '<img src="https://randomuser.me/api/portraits/lego/1.jpg" class="author-img" style="width:60px;height:60px;margin:0 auto 10px;display:block">' +
+                                  '<div class="author-name">' + rec.author + '</div>' +
+                                  '<div class="author-bio">Community Chef</div>';
+             
+             // Fetch stats
+             fetch('/users/' + rec.author_id + '/stats')
+                .then(r => r.json())
+                .then(d => {
+                    if (d.ok) {
+                        var statsDiv = document.createElement('div');
+                        statsDiv.className = 'author-stats';
+                        statsDiv.style.fontSize = '14px';
+                        statsDiv.style.color = '#777';
+                        statsDiv.style.marginBottom = '10px';
+                        
+                        let s = '<div style="margin-bottom:4px;"><i class="fas fa-user-friends"></i> ' + d.followers + ' followers</div>';
+                        s += '<div><i class="fas fa-eye"></i> ' + (d.total_views || 0) + ' total views</div>';
+                        
+                        statsDiv.innerHTML = s;
+                        // Insert after bio
+                        var bio = authorEl.querySelector('.author-bio');
+                        if (bio) bio.after(statsDiv);
+                        else authorEl.appendChild(statsDiv);
+                    }
+                });
+
+             // Link to profile
+             var profileLink = document.createElement('a');
+             profileLink.href = '../profile.html?user_id=' + rec.author_id;
+             profileLink.textContent = 'View Profile';
+             profileLink.style.display = 'block';
+             profileLink.style.marginBottom = '15px';
+             profileLink.style.color = '#e67e22';
+             profileLink.style.textDecoration = 'none';
+             profileLink.style.fontWeight = '600';
+             profileLink.style.fontSize = '14px';
+             authorEl.appendChild(profileLink);
+
+         } else {
+             authorEl.textContent = 'Uploaded by: ' + (rec.author || 'CookVala');
+         }
+      }
+
+      (function followInit() {
+        var followEl = document.getElementById('meta-follow');
+        if (!followEl) return;
+        
+        // Ensure IDs are comparable
+        var authorId = parseInt(rec.author_id);
+        var userId = parseInt(u.id);
+
+        if (!authorId || isNaN(authorId)) {
+            console.log('No valid author ID for follow buttons');
+            return;
+        }
+
+        if (userId === authorId) {
+            followEl.innerHTML = '<div style="color:#777; font-size:0.9em; margin-top:5px;">(This is your recipe)</div>';
+            return;
+        }
+
+        fetch('/users/' + authorId + '/relationship?viewer_id=' + userId)
+          .then(r => r.json())
+          .then(d => {
+            var txt = d.following ? 'Unfollow' : 'Follow';
+            var btnClass = d.following ? 'btn-outline' : 'btn-follow';
+            
+            followEl.innerHTML = `
+                <button id="act-follow" class="${btnClass}" style="justify-content:center; width:100%; margin-bottom:10px;">
+                    <i class="fas fa-user-plus"></i> ${txt}
+                </button> 
+                <button id="act-message" class="btn-action btn-outline" style="width:100%; justify-content:center; margin-bottom:10px;">
+                    <i class="far fa-envelope"></i> Message
+                </button>
+            `;
+            
+            document.getElementById('act-follow').onclick = function() {
+              var url = d.following ? '/users/' + authorId + '/unfollow' : '/users/' + authorId + '/follow';
+              console.log('Click Follow/Unfollow', { url, authorId, userId });
+              fetch(url, { 
+                  method: 'POST', 
+                  headers: {'Content-Type':'application/json'}, 
+                  body: JSON.stringify({ follower_id: userId }) 
+              })
+               .then(r => r.json())
+               .then(res => {
+                   if (res.ok) {
+                       location.reload();
+                   } else {
+                       console.error('Follow action failed:', res);
+                       alert('Action failed: ' + (res.error || 'Unknown error'));
+                   }
+               })
+               .catch(err => {
+                   console.error('Follow network error:', err);
+                   alert('Network error');
+               });
+            };
+            
+            document.getElementById('act-message').onclick = function() {
+              window.location.href = '../messages.html?peer_id=' + authorId;
+            };
+          })
+          .catch(err => {
+              console.error('Follow check failed', err);
+          });
+      })();
+
+      (function promoteInit() {
+        if (u.id !== rec.author_id) return;
+        var actions = document.querySelector('.action-buttons');
+        if (actions) {
+          var btn = document.createElement('button');
+          btn.className = 'btn-action btn-outline';
+          btn.id = 'act-promote';
+          
+          var isPromoted = rec.promotion_status === 'active';
+          btn.innerHTML = isPromoted ? '<i class="fas fa-pause"></i> Depromote' : '<i class="fas fa-bullhorn"></i> Promote';
+          if (isPromoted) {
+              btn.style.background = '#7f8c8d';
+              btn.style.color = '#fff';
+              btn.style.borderColor = '#7f8c8d';
+          }
+
+          btn.onclick = async function() {
+            var newStatus = isPromoted ? 'paused' : 'active';
+            
+            if (newStatus === 'active') {
+                try {
+                    await TastyPayment.request(5.00, 'Recipe Promotion Fee');
+                } catch (err) {
+                    console.log('Payment cancelled');
+                    return;
+                }
+            }
+
+            fetch('/recipes/' + id + '/promote', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: u.id, status: newStatus }) })
+              .then(r=>r.json())
+              .then(d=>{ 
+                  if(d.ok) {
+                      alert('Status updated: ' + d.status);
+                      location.reload();
+                  } else {
+                      alert('Failed: ' + d.error);
+                  }
+              })
+              .catch(e => alert('Network error'));
+          };
+          actions.appendChild(btn);
+        }
+      })();
+
+      // Ratings
+      function loadRatings() {
+          fetch('/recipes/' + id + '/rating?user_id=' + u.id)
+              .then(r => r.json())
+              .then(d => {
+                  if (d.ok) {
+                      renderStars(d.average, d.my_rating);
+                      document.getElementById('rating-value').textContent = '(' + d.count + ' ratings)';
+                  }
+              })
+              .catch(console.error);
+      }
+      
+      function renderStars(avg, myRating) {
+          var container = document.getElementById('rating-stars');
+          container.innerHTML = '';
+          for (var i = 1; i <= 5; i++) {
+              var star = document.createElement('i');
+              star.className = (i <= avg) ? 'fas fa-star' : 'far fa-star';
+              star.style.color = '#f1c40f';
+              star.style.cursor = 'pointer';
+              star.onclick = (function(val) {
+                  return function() {
+                      submitRating(val);
+                  };
+              })(i);
+              container.appendChild(star);
+          }
+          if (myRating > 0) {
+              var msg = document.createElement('span');
+              msg.textContent = ' (You: ' + myRating + ')';
+              msg.style.fontSize = '12px';
+              msg.style.color = '#777';
+              container.appendChild(msg);
+          }
+      }
+
+      function submitRating(val) {
+          fetch('/recipes/' + id + '/rate', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ user_id: u.id, rating: val })
+          })
+          .then(r => r.json())
+          .then(d => {
+              if (d.ok) loadRatings();
+              else alert('Rating failed');
+          })
+          .catch(e => alert('Network error'));
+      }
+      loadRatings();
+
+      // Save Action
+      function toggleSave() {
+        fetch('/recipes/' + id + '/save', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ user_id: u.id })
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.ok) {
+                var txt = d.saved ? '<i class="fas fa-heart"></i> Unsave' : '<i class="fas fa-heart"></i> Save Recipe';
+                document.getElementById('act-save').innerHTML = txt;
+                alert(d.saved ? 'Recipe saved!' : 'Recipe removed from saved.');
+            } else {
+                alert('Action failed');
+            }
+        })
+        .catch(e => alert('Network error'));
+      }
+      document.getElementById('act-save').onclick = toggleSave;
+
+      // Share
+      function share() {
+        var url = window.location.href;
+        if (navigator.share) navigator.share({ title: rec.name, url: url });
+        else {
+           navigator.clipboard.writeText(url);
+           alert('Link copied to clipboard!');
+        }
+      }
+      document.getElementById('act-share').onclick = share;
+      
+      // Print
+      function printPage() { window.print(); }
+      document.getElementById('act-print').onclick = printPage;
+
+      // Likes (Backend)
+      function loadLikes() {
+          fetch('/recipes/' + id + '/likes?user_id=' + u.id)
+              .then(r => r.json())
+              .then(d => {
+                  document.getElementById('like-count').textContent = d.likes;
+                  document.getElementById('act-like').innerHTML = (d.liked ? '<i class="fas fa-thumbs-up"></i> Liked' : '<i class="far fa-thumbs-up"></i> Like') + ' (<span id="like-count">' + d.likes + '</span>)';
+                  if (d.liked) document.getElementById('act-like').classList.add('liked');
+                  else document.getElementById('act-like').classList.remove('liked');
+              })
+              .catch(console.error);
+      }
+      loadLikes();
+
+      document.getElementById('act-like').onclick = function() {
+          fetch('/recipes/' + id + '/like', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ user_id: u.id })
+          })
+          .then(r => r.json())
+          .then(d => {
+              if (d.ok) loadLikes();
+              else alert('Action failed');
+          })
+          .catch(e => alert('Network error'));
+      };
+
+      // Comments
+      function loadComments() {
+          const list = document.getElementById('comments-list');
+          fetch('/recipes/' + id + '/comments')
+              .then(r => r.json())
+              .then(d => {
+                  if (d.ok && d.comments) {
+                      if (d.comments.length === 0) {
+                          list.innerHTML = '<p style="color:#777">No comments yet.</p>';
+                          return;
+                      }
+                      list.innerHTML = '';
+                      d.comments.forEach(c => {
+                          const div = document.createElement('div');
+                          div.style.padding = '10px';
+                          div.style.borderBottom = '1px solid #eee';
+                          div.innerHTML = `
+                              <div style="font-weight:bold; margin-bottom:5px;">${c.user_name || 'User'} <span style="font-weight:normal;color:#999;font-size:0.8em">${new Date(c.created_at).toLocaleDateString()}</span></div>
+                              <div>${c.content}</div>
+                          `;
+                          list.appendChild(div);
+                      });
+                  }
+              })
+              .catch(e => {
+                  list.innerHTML = '<p style="color:red">Error loading comments</p>';
+              });
+      }
+      loadComments();
+
+      document.getElementById('btn-post-comment').onclick = function() {
+          const inp = document.getElementById('comment-input');
+          const content = inp.value.trim();
+          if (!content) return;
+          
+          fetch('/recipes/' + id + '/comments', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ user_id: u.id, content: content })
+          })
+          .then(r => r.json())
+          .then(d => {
+              if (d.ok) {
+                  inp.value = '';
+                  loadComments();
+              } else {
+                  alert('Failed to post comment');
+              }
+          })
+          .catch(e => alert('Network error'));
+      };
+
+      // Ratings logic is handled above by loadRatings()
+    }
+
+  })();
+</script>
