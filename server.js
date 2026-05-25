@@ -61,10 +61,17 @@ const app = express();
     dbReady = result.dbReady;
     console.log('Database connected and ready.');
     
-    // Optional: Seed recipes if the table is empty
+    // Auto-seed recipes if the table is empty
     const [count] = await pool.query('SELECT COUNT(*) as c FROM recipes');
     if (count[0].c === 0) {
-      console.log('Database empty. You may want to run a seed script later, or I can add it here.');
+      console.log('Database empty. Auto-seeding initial recipes...');
+      try {
+        const { seedDatabase } = require('./scripts/seed_recipes');
+        await seedDatabase(pool);
+        console.log('Initial recipes seeded successfully.');
+      } catch (seedErr) {
+        console.error('Failed to seed recipes:', seedErr);
+      }
     }
   } catch (e) {
     console.error('Database initialization failed:', e);
