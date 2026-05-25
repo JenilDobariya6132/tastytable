@@ -995,10 +995,10 @@ app.get('/admin/stats', async (_req, res) => {
   if (!dbReady) return res.json({ ok: true, users_count: 0, admins_count: 0, db_recipes_count: 0, reels_count: 0, total_views: 0 });
   try {
     const [u] = await pool.query('SELECT COUNT(*) AS c FROM users');
-    const [a] = await pool.query('SELECT COUNT(*) AS c FROM users WHERE role="admin"');
-    const [r] = await pool.query('SELECT COUNT(*) AS c FROM recipes WHERE category != "Reels" AND (video IS NULL OR video = "")');
+    const [a] = await pool.query("SELECT COUNT(*) AS c FROM users WHERE role='admin'");
+    const [r] = await pool.query("SELECT COUNT(*) AS c FROM recipes WHERE category != 'Reels' AND (video IS NULL OR video = '')");
     const [v] = await pool.query('SELECT COUNT(*) AS c FROM videos');
-    const [rv] = await pool.query('SELECT COUNT(*) AS c FROM recipes WHERE category = "Reels" OR (video IS NOT NULL AND video != "")');
+    const [rv] = await pool.query("SELECT COUNT(*) AS c FROM recipes WHERE category = 'Reels' OR (video IS NOT NULL AND video != '')");
     
     // Calculate total views (sum of recipe views)
     const [views] = await pool.query('SELECT SUM(view_count) AS c FROM recipes');
