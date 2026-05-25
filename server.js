@@ -966,6 +966,31 @@ app.delete('/recipes/:id', async (req, res) => {
   }
 });
 
+// --- ADMIN UTILS ---
+
+// Trigger Manual Seeding (Only for Admins)
+app.post('/admin/seed-db', async (req, res) => {
+    if (!dbReady) return res.status(503).json({ error: 'Database unavailable' });
+    const { user_id } = req.body;
+
+    try {
+        // Verify admin
+        const [user] = await pool.query('SELECT role FROM users WHERE id = ?', [user_id]);
+        if (!user.length || user[0].role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        console.log('Manual seeding triggered by admin...');
+        const { seedDatabase } = require('./scripts/seed_recipes');
+        await seedDatabase(pool);
+        
+        res.json({ ok: true, message: 'Recipes seeded successfully!' });
+    } catch (e) {
+        console.error('Manual seed failed:', e);
+        res.status(500).json({ error: 'Seed failed: ' + e.message });
+    }
+});
+
 app.get('/admin/stats', async (_req, res) => {
   if (!dbReady) return res.json({ ok: true, users_count: 0, admins_count: 0, db_recipes_count: 0, reels_count: 0, total_views: 0 });
   try {
