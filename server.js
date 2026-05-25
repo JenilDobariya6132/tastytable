@@ -44,6 +44,31 @@ const { initDb: initDbExternal } = require('./database/init');
 const ALLOWED_ADMINS = ['jenildobariya47@gmail.com', 'vrajbhuva346@gmail.com'];
 
 const app = express();
+
+// --- AUTO INITIALIZE DATABASE ---
+(async function() {
+  try {
+    console.log('Auto-initializing database...');
+    const result = await initDbExternal({ 
+      host: process.env.MYSQL_HOST || 'localhost', 
+      user: process.env.MYSQL_USER || 'root', 
+      password: process.env.MYSQL_PASSWORD || 'Jenil@2007', 
+      database: process.env.MYSQL_DATABASE || 'cookvala', 
+      port: process.env.MYSQL_PORT || 3306 
+    });
+    pool = result.pool;
+    dbReady = result.dbReady;
+    console.log('Database connected and ready.');
+    
+    // Optional: Seed recipes if the table is empty
+    const [count] = await pool.query('SELECT COUNT(*) as c FROM recipes');
+    if (count[0].c === 0) {
+      console.log('Database empty. You may want to run a seed script later, or I can add it here.');
+    }
+  } catch (e) {
+    console.error('Database initialization failed:', e);
+  }
+})();
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -2139,15 +2164,10 @@ app.get('/api/feed', async (req, res) => {
     }
 });
 
-initDbExternal({ host: DB_HOST, user: DB_USER, password: DB_PASS, database: DB_NAME, port: DB_PORT })
-  .then(({ pool: p, dbReady: ready }) => { pool = p; dbReady = ready; })
-  .catch(err => { console.error('DB init failed', err); })
-  .finally(() => {
-  app.use(express.static(path.join(__dirname)));
-  app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-    if (!dbReady) {
-      console.log('Database not connected. Static site is served; API returns empty/unavailable.');
-    }
-  });
+app.use(express.static(path.join(__dirname)));
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+  if (!dbReady) {
+    console.log('Waiting for database to connect...');
+  }
 });
