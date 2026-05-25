@@ -359,44 +359,89 @@ const recipes = [
     intro: "Thin crisp disc.",
     ingredients: ["Papad", "Oil (optional)"],
     instructions: ["Roast on flame or fry in oil."]
+  },
+
+  // International
+  {
+    name: "Creamy Garlic Chicken Pasta",
+    category: "Lunch",
+    prep_time: "10 min",
+    cook_time: "20 min",
+    servings: "4",
+    calories: 620,
+    intro: "A rich, comforting pasta made with tender chicken and garlic cream sauce.",
+    ingredients: ["8 oz pasta", "2 chicken breasts", "4 cloves garlic", "Olive oil", "Butter", "Chicken broth", "Heavy cream", "Parmesan", "Lemon juice", "Parsley"],
+    instructions: ["Cook pasta al dente.", "Saute chicken until golden.", "Add garlic and cook.", "Add cream and Parmesan, simmer.", "Toss with pasta and serve."]
+  },
+  {
+    name: "Sheet-Pan Chicken Fajitas",
+    category: "Dinner",
+    prep_time: "10 min",
+    cook_time: "20 min",
+    servings: "4",
+    calories: 460,
+    intro: "Quick sheet-pan fajitas with chicken, peppers, and onions—perfect for busy nights.",
+    ingredients: ["1 lb chicken breast", "2 bell peppers", "1 onion", "Olive oil", "Chili powder", "Cumin", "Paprika", "Garlic powder", "Tortillas", "Lime"],
+    instructions: ["Preheat oven to 425°F.", "Toss chicken and veggies with oil and spices.", "Roast for 18-22 minutes.", "Warm tortillas.", "Serve with lime and cilantro."]
+  },
+  {
+    name: "Veggie Fried Rice",
+    category: "Lunch",
+    prep_time: "10 min",
+    cook_time: "15 min",
+    servings: "4",
+    calories: 380,
+    intro: "Quick fried rice with mixed vegetables and day-old rice. Perfect for leftovers.",
+    ingredients: ["3 cups day-old rice", "2 eggs", "1 cup mixed vegetables", "3 green onions", "Garlic", "Soy sauce", "Sesame oil"],
+    instructions: ["Scramble eggs and set aside.", "Sauté garlic and veggies.", "Add rice and stir-fry.", "Stir in sauces and eggs.", "Finish with sesame oil."]
   }
 ];
 
-(async function() {
-  let conn;
-  try {
-    conn = await mysql.createConnection({
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASS,
-      database: DB_NAME,
-      port: process.env.MYSQL_PORT || 3306,
-      ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
-    });
-
-    console.log('Connected to DB');
-
-    for (const r of recipes) {
-      const id = slugify(r.name) + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-      const query = `
-        INSERT INTO recipes 
-        (id, name, category, prep_time, cook_time, servings, calories, intro, ingredients, instructions, author, author_id, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-      `;
-      
-      const ingredientsJson = JSON.stringify(r.ingredients);
-      const instructionsJson = JSON.stringify(r.instructions);
-
-      await conn.execute(query, [
-        id, r.name, r.category, r.prep_time, r.cook_time, r.servings, r.calories, 
-        r.intro, ingredientsJson, instructionsJson, AUTHOR_NAME, AUTHOR_ID
-      ]);
-      console.log(`Inserted: ${r.name}`);
-    }
-
-    console.log('Done inserting recipes.');
+async function seedDatabase(pool) {
+  console.log('Seeding recipes...');
+  for (const r of recipes) {
+    const id = slugify(r.name) + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    const query = `
+      INSERT INTO recipes 
+      (id, name, category, prep_time, cook_time, servings, calories, intro, ingredients, instructions, author, author_id, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    `;
     
-  } catch (err) {
+    const ingredientsJson = JSON.stringify(r.ingredients);
+    const instructionsJson = JSON.stringify(r.instructions);
+
+    await pool.execute(query, [
+      id, r.name, r.category, r.prep_time, r.cook_time, r.servings, r.calories, 
+      r.intro, ingredientsJson, instructionsJson, AUTHOR_NAME, AUTHOR_ID
+    ]);
+    console.log(`Inserted: ${r.name}`);
+  }
+  console.log('Done inserting recipes.');
+}
+
+module.exports = { seedDatabase };
+
+if (require.main === module) {
+  (async function() {
+    let conn;
+    try {
+      conn = await mysql.createConnection({
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASS,
+        database: DB_NAME,
+        port: process.env.MYSQL_PORT || 3306,
+        ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: false }
+      });
+
+      console.log('Connected to DB');
+      await seedDatabase(conn);
+      await conn.end();
+    } catch (err) {
+      console.error('Seed error:', err);
+    }
+  })();
+}
     console.error('Error:', err);
   } finally {
     if (conn) await conn.end();
