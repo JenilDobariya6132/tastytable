@@ -54,7 +54,8 @@ const app = express();
       user: process.env.MYSQL_USER || 'root', 
       password: process.env.MYSQL_PASSWORD || 'Jenil@2007', 
       database: process.env.MYSQL_DATABASE || 'cookvala', 
-      port: process.env.MYSQL_PORT || 3306 
+      port: process.env.MYSQL_PORT || 3306,
+      ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: false }
     });
     pool = result.pool;
     dbReady = result.dbReady;

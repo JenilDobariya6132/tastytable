@@ -6,11 +6,9 @@ async function initDb(opts) {
   const password = opts.password;
   const database = opts.database;
   const port = opts.port || 3306;
+  const ssl = opts.ssl || { minVersion: 'TLSv1.2', rejectUnauthorized: false };
   let pool;
   let dbReady = false;
-  
-  // Cloud databases like TiDB Serverless usually require SSL
-  const ssl = { minVersion: 'TLSv1.2', rejectUnauthorized: true };
 
   const conn = await mysql.createConnection({ host, user, password, port, ssl, multipleStatements: true });
   await conn.query(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
