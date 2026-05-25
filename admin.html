@@ -182,6 +182,7 @@
                 <option value="reel">Reels Only</option>
             </select>
             <button onclick="openAdsModal()" class="btn-add" style="background:#e67e22; border:none; cursor:pointer;">Manage Ads</button>
+            <button onclick="seedDatabase()" class="btn-add" style="background:#9b59b6; border:none; cursor:pointer;">Seed Database</button>
             <a href="add-recipe.html" class="btn-add">+ Add Recipe</a>
             <a href="add-recipe.html?type=reel" class="btn-add" style="background:#333;">+ Add Reel</a>
         </div>
@@ -410,6 +411,44 @@
         }).then(r => r.json()).then(res => {
           if (!res.ok) alert('Failed to update featured: ' + (res.error || 'Unknown'));
         }).catch(_ => alert('Network error'));
+      };
+
+      // --- Database Seed ---
+      window.seedDatabase = function() {
+        if (!confirm('Are you sure you want to seed the database with all initial recipes? This will skip recipes that already exist.')) return;
+        
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Seeding...';
+        
+        try {
+            const user = JSON.parse(localStorage.getItem('tt_user'));
+            
+            fetch('/admin/seed-db', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: user.id })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Database seeded successfully! All recipes have been added.');
+                    location.reload(); // Refresh to see stats and list
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(e => alert('Network error'))
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+        } catch (e) {
+            alert('Authentication error');
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
       };
 
       // --- Ads Management ---
