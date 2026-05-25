@@ -442,8 +442,3 @@ if (require.main === module) {
     }
   })();
 }
-    console.error('Error:', err);
-  } finally {
-    if (conn) await conn.end();
-  }
-})();
